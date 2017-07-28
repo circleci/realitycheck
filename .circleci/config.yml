@@ -12,5 +12,5 @@ jobs:
       image: circleci/ruby:2.4.1
     resource_class: small
     steps:
-      - echo 'I ran in a small'
-      - echo $CIRCLE_COMPARE_URL
+      - run: echo 'I ran in a small'
+      - run: echo $CIRCLE_COMPARE_URL
