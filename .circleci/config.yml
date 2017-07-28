@@ -5,6 +5,9 @@ workflows:
   test:
     jobs:
       - small
+      - medium
+      - medium-plus
+      - large
 
 job-default: &job-default
   docker:
