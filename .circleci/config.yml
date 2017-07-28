@@ -6,11 +6,14 @@ workflows:
     jobs:
       - small
 
+job-default: &job-default
+  docker:
+    - image: circleci/ruby:2.4.1
+  steps:
+    - run: echo $CIRCLE_JOB  
+
 jobs:
   small:
-    docker:
-      - image: circleci/ruby:2.4.1
+    <<: *job-default
     resource_class: small
-    steps:
-      - run: echo 'I ran in a small'
-      - run: echo $CIRCLE_COMPARE_URL
+    
