@@ -1,15 +1,16 @@
 version: 2
 
-jobs:
-  small:
-    docker:
-      image: circleci/ruby:2.4.1
-    resource_class: small
-    steps:
-      - run: echo 'I ran in a small'
-      - run: echo $CIRCLE_COMPARE_URL
 workflows:
   version: 2
   test:
     jobs:
       - small
+
+jobs:
+  small:
+    docker:
+      - image: circleci/ruby:2.4.1
+    resource_class: small
+    steps:
+      - run: echo 'I ran in a small'
+      - run: echo $CIRCLE_COMPARE_URL
