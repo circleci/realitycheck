@@ -22,9 +22,11 @@ job-default: &job-default
 waiter: &waiter
   machine: true
   steps:
-    - run: echo $SLEEP
-    - run: sleep $SLEEP
-    - run: echo 'Done sleeping'
+    - run: |
+        echo $SLEEP
+        date
+        sleep $SLEEP
+        echo 'Done sleeping'
 
 jobs:
   small:
