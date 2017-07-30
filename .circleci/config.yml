@@ -11,6 +11,7 @@ workflows:
   other:
     jobs:
       - other
+      - wait1
 
 job-default: &job-default
   docker:
@@ -45,4 +46,4 @@ jobs:
   wait1:
     <<: *waiter
     environment:
-      SLEEP : 1
+      SLEEP: 1
