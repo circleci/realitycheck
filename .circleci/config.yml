@@ -8,6 +8,9 @@ workflows:
       - medium
       - medium-plus
       - large
+  other:
+    jobs:
+      - other
 
 job-default: &job-default
   docker:
@@ -29,3 +32,5 @@ jobs:
     <<: *job-default
     resource_class: large
     
+  other:
+    <<: *job-default
