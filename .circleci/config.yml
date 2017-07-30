@@ -26,6 +26,7 @@ waiter: &waiter
         echo $SLEEP
         date
         sleep $SLEEP
+        date
         echo 'Done sleeping'
 
 jobs:
