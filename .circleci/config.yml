@@ -8,10 +8,15 @@ workflows:
       - medium
       - medium-plus
       - large
-  other:
+  waiter1:
     jobs:
-      - other
       - wait1
+      - wait5
+  waiter2:
+    jobs:
+      - wait1
+      - wait5
+
 
 job-default: &job-default
   docker:
@@ -42,11 +47,12 @@ jobs:
   large:
     <<: *job-default
     resource_class: large
-    
-  other:
-    <<: *job-default
 
   wait1:
     <<: *waiter
     environment:
       SLEEP: 1
+  wait5:
+    <<: *waiter
+    environment:
+      SLEEP: 5
