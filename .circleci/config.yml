@@ -16,7 +16,14 @@ job-default: &job-default
   docker:
     - image: circleci/ruby:2.4.1
   steps:
-    - run: echo $CIRCLE_JOB  
+    - run: echo $CIRCLE_JOB 
+
+waiter: &waiter
+  machine: true
+  steps:
+    - run: echo $SLEEP
+    - run: sleep $SLEEP
+    - run: echo 'Done sleeping'
 
 jobs:
   small:
@@ -34,3 +41,8 @@ jobs:
     
   other:
     <<: *job-default
+
+  wait1:
+    <<: *waiter
+    environment:
+      SLEEP : 1
