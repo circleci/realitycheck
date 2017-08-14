@@ -2,20 +2,15 @@ version: 2
 
 workflows:
   version: 2
-  test:
+  resource_class_jobs:
     jobs:
       - small
       - medium
       - medium-plus
       - large
-  waiter1:
+  machine_jobs:
     jobs:
-      - wait1
-      - wait5
-  waiter2:
-    jobs:
-      - wait1
-      - wait5
+      - machine1
 
 
 job-default: &job-default
@@ -24,7 +19,7 @@ job-default: &job-default
   steps:
     - run: echo $CIRCLE_JOB 
 
-waiter: &waiter
+machine: &machine
   machine: true
   steps:
     - run: |
@@ -48,11 +43,7 @@ jobs:
     <<: *job-default
     resource_class: large
 
-  wait1:
-    <<: *waiter
+  machine1:
+    <<: *machine
     environment:
       SLEEP: 1
-  wait5:
-    <<: *waiter
-    environment:
-      SLEEP: 5
