@@ -12,12 +12,9 @@ workflows:
     jobs:
       - machine1
 
-default-container: $default-container
-  image: circleci/ruby:2.4.1
-
 job-default: &job-default
   docker:
-    - *default-container
+    - image: circleci/ruby:2.4.1
   steps:
     - run: echo $CIRCLE_JOB 
 
