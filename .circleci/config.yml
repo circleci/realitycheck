@@ -15,8 +15,8 @@ workflows:
     jobs:
       - write_workspace
       - use_workspace
-        requires:
-          - write_workspace
+          requires:
+            - write_workspace
 
 job-default: &job-default
   docker:
