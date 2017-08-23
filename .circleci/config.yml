@@ -18,7 +18,7 @@ workflows:
           requires:
             - write_workspace
 
-job-default: &job-default
+resource-job-default: &resource-job-default
   docker:
     - image: circleci/ruby:2.4.1
   steps:
@@ -36,16 +36,16 @@ machine: &machine
 
 jobs:
   small:
-    <<: *job-default
+    <<: *resource-job-default
     resource_class: small
   medium:
-    <<: *job-default
+    <<: *resource-job-default
     resource_class: medium
   medium-plus:
-    <<: *job-default
+    <<: *resource-job-default
     resource_class: medium+
   large:
-    <<: *job-default
+    <<: *resource-job-default
     resource_class: large
 
   machine1:
@@ -64,3 +64,11 @@ jobs:
           root: .
           paths:
             - stuff
+  use_workspace:
+    docker:
+      - image: circleci/node:latest-browsers
+    working_directory: ~/foo/bar/
+    steps:
+      - attach_workspace:
+           at: ./attached
+      - run: ls -al attached
