@@ -14,7 +14,7 @@ workflows:
   feature_jobs:
     jobs:
       - write_workspace
-      - use_workspace
+      - use_workspace:
           requires:
             - write_workspace
 
