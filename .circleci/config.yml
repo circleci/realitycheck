@@ -72,8 +72,11 @@ jobs:
       - attach_workspace:
            at: ./attached
       - run: |
-          if [[ $(< ./attached/stuff/thing) != '5' ]]; then
+          if [[ $(< ./attached/stuff/thing) != '4' ]]; then
             echo 'Sadness, the value is not what we expected, so the workspace write/read did not work'
             exit 1
+          else
+            echo 'Yay, value matches'
+            exit 0
           fi
 
