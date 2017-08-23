@@ -11,6 +11,12 @@ workflows:
   machine_jobs:
     jobs:
       - machine1
+  feature_jobs:
+    jobs:
+      - write_workspace
+      - use_workspace
+        requires:
+          - write_workspace
 
 job-default: &job-default
   docker:
@@ -46,3 +52,15 @@ jobs:
     <<: *machine
     environment:
       SLEEP: 1
+
+  write_workspace:
+    docker:
+      - image: circleci/node:latest-browsers
+    working_directory: /foo/bar/
+    steps:
+      - run: mkdir stuff
+      - run: echo 5 >./stuff/thing
+      - persist_to_workspace:
+          root: .
+          paths:
+            - stuff
