@@ -56,7 +56,7 @@ jobs:
   write_workspace:
     docker:
       - image: circleci/node:latest-browsers
-    working_directory: /foo/bar/
+    working_directory: ~/foo/bar/
     steps:
       - run: mkdir stuff
       - run: echo 5 >./stuff/thing
