@@ -72,5 +72,8 @@ jobs:
       - attach_workspace:
            at: ./attached
       - run: |
-          echo 'contents of the file should be 5'
-          cat ./attached/stuff/thing
+          if [[ $(< ./attached/stuff/thing) != '5' ]]; then
+            echo 'Sadness, the value is not what we expected, so the workspace write/read did not work'
+            exit 1
+          fi
+
