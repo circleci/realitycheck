@@ -55,7 +55,7 @@ jobs:
 
   write_workspace:
     docker:
-      - image: circleci/node:latest-browsers
+      - image: circleci/node:latest
     working_directory: ~/foo/bar/
     steps:
       - run: mkdir stuff
@@ -66,9 +66,11 @@ jobs:
             - stuff
   use_workspace:
     docker:
-      - image: circleci/node:latest-browsers
+      - image: circleci/node:latest
     working_directory: ~/foo/bar/
     steps:
       - attach_workspace:
            at: ./attached
-      - run: ls -al attached
+      - run: |
+          echo 'contents of the file should be 5'
+          cat ./attached/stuff/thing
