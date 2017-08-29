@@ -32,7 +32,7 @@ machine: &machine
         date
         sleep $SLEEP
         date
-        echo 'Done sleeping...'
+        echo 'Done sleeping.'
 
 jobs:
   small:
