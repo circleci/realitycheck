@@ -10,8 +10,7 @@ workflows:
       - large
   contexts_job:
     jobs:
-      - contexts:
-          context: org-global
+      context: org-global
   machine_jobs:
     jobs:
       - machine1
