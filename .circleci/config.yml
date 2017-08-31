@@ -8,6 +8,9 @@ workflows:
       - medium
       - medium-plus
       - large
+  contexts_job:
+    jobs:
+      - contexts
   machine_jobs:
     jobs:
       - machine1
