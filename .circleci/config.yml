@@ -8,6 +8,10 @@ workflows:
       - medium
       - medium-plus
       - large
+  contexts_job:
+    jobs:
+      - contexts:
+          context: org-global
   machine_jobs:
     jobs:
       - machine1
@@ -52,6 +56,15 @@ jobs:
     <<: *machine
     environment:
       SLEEP: 1
+
+  contexts:
+    docker:
+      - image: alpine/latest
+    working_directory: /a/contexts/test
+    steps:
+      - run:
+          name: is our env var in here?
+          command: `env | grep CONTEXTS_SERVICE_PROVIDED_ENV_VAR`
 
   write_workspace:
     docker:
