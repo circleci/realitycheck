@@ -61,9 +61,7 @@ jobs:
       - image: alpine/latest
     working_directory: /a/contexts/test
     steps:
-      - run:
-          name: is our env var in here?
-          command: `env | grep CONTEXTS_SERVICE_PROVIDED_ENV_VAR`
+      - run: env | grep CONTEXTS_SERVICE_PROVIDED_ENV_VAR
 
   write_workspace:
     docker:
