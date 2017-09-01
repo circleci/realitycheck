@@ -57,7 +57,7 @@ jobs:
 
   contexts:
     docker:
-      - image: alpine/latest
+      - image: alpine:latest
     working_directory: /a/contexts/test
     steps:
       - run: env | grep CONTEXTS_SERVICE_PROVIDED_ENV_VAR
