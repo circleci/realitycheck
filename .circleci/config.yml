@@ -8,14 +8,13 @@ workflows:
       - medium
       - medium-plus
       - large
-  contexts_job:
-    jobs:
-      context: org-global
   machine_jobs:
     jobs:
       - machine1
   feature_jobs:
     jobs:
+      - contexts:
+          context: org-global
       - write_workspace
       - use_workspace:
           requires:
