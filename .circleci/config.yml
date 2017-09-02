@@ -47,9 +47,8 @@ basic_docker_build: &basic_docker_build
     dockerfile=Dockerfile
     echo "FROM alpine:latest" > $dockerfile
     echo "RUN echo hello" >> $dockerfile
-    docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM throwaway:latest.
-    docker run --rm throwaway:latest 
-    docker exec throwaway:latest docker inspect
+    docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM throwaway:$CIRCLE_BUILD_NUM.
+    docker run --rm throwaway:$CIRCLE_BUILD_NUM 
 
 jobs:
   small:
