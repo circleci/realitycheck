@@ -59,7 +59,7 @@ jobs:
   remote_docker:
     docker: [{image: 'docker:17.06-git'}]
     steps:
-      - run: docker version
+      - run: docker version --format '{{.Server.Version}}'
       - setup_remote_docker:
           version: 17.05.0-ce
           reusable: true
