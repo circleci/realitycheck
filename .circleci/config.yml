@@ -49,7 +49,7 @@ basic_docker_build: &basic_docker_build
     echo "RUN echo hello" >> $dockerfile
     docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
     docker run --rm throwaway:$CIRCLE_BUILD_NUM 
-    docker exec throwaway:$CIRCLE_BUILD_NUM echo executing!
+    docker exec throwaway docker inspect
 
 jobs:
   small:
