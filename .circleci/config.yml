@@ -62,7 +62,6 @@ jobs:
       - run: which docker
       - run: docker -v
       - setup_remote_docker:
-          version: 17.05.0-ce
           reusable: true
           exclusive: false
       - run: which docker    
