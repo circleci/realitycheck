@@ -37,6 +37,15 @@ machine: &machine
         date
         echo 'Done sleeping.'
 
+basic_docker_build: &basic_docker_build
+  name: "Build a really basic docker image"
+  command: |
+    dockerfile=Dockerfile
+    echo "FROM alpine:latest" > $dockerfile
+    echo "RUN echo hello" >> $dockerfile
+    docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
+    docker run --rm throwaway:$CIRCLE_BUILD_NUM 
+
 jobs:
   small:
     <<: *resource-job-default
@@ -65,13 +74,7 @@ jobs:
           reusable: true
           exclusive: false
       - run:
-          name: "Build a really basic docker image"
-          command: |
-            dockerfile=Dockerfile
-            echo "FROM alpine:latest" > $dockerfile
-            echo "RUN echo hello" >> $dockerfile
-            docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
-            docker run --rm throwaway:$CIRCLE_BUILD_NUM   
+          <<: *basic_docker_build
       - run: docker version
 
   contexts:
