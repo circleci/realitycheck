@@ -37,6 +37,9 @@ machine: &machine
         date
         echo 'Done sleeping.'
 
+remote_docker_executor: &remote_docker_executor
+  docker: [{image: 'docker:17.06-git'}]
+  
 basic_docker_build: &basic_docker_build
   name: "Build a really basic docker image"
   command: |
@@ -65,8 +68,8 @@ jobs:
     environment:
       SLEEP: 1
 
-  remote_docker:
-    docker: [{image: 'docker:17.06-git'}]
+  remote_docker_reusable:
+    <<: *remote_docker_executor
     steps:
       - run: which docker
       - run: docker -v
@@ -76,6 +79,16 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+
+  remote_docker:
+    <<: *remote_docker_executor
+    steps:
+      - run: which docker
+      - run: docker -v
+      - setup_remote_docker
+      - run:
+          <<: *basic_docker_build
+      - run: docker version      
 
   contexts:
     docker:
