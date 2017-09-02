@@ -71,8 +71,7 @@ jobs:
             echo "FROM alpine:latest" > $dockerfile
             echo "RUN echo hello" >> $dockerfile
             docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
-            docker run --rm throwaway:$CIRCLE_BUILD_NUM 
-      - run: which docker    
+            docker run --rm throwaway:$CIRCLE_BUILD_NUM   
       - run: docker version
 
   contexts:
