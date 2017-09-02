@@ -11,6 +11,7 @@ workflows:
   machine_jobs:
     jobs:
       - machine1
+      - remote_docker
   feature_jobs:
     jobs:
       - contexts:
@@ -54,6 +55,16 @@ jobs:
     <<: *machine
     environment:
       SLEEP: 1
+
+  remote_docker:
+    docker: [{image: 'docker:17.06-git'}]
+    steps:
+      - run: docker version
+      - setup_remote_docker:
+          version: 17.05.0-ce
+          reusable: true
+          exclusive: false
+      - run: docker version
 
   contexts:
     docker:
