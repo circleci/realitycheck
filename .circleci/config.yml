@@ -64,6 +64,14 @@ jobs:
       - setup_remote_docker:
           reusable: true
           exclusive: false
+      - run:
+          name: "Build a really basic docker image"
+          command: |
+            dockerfile=Dockerfile
+            echo "FROM alpine:latest" > $dockerfile
+            echo "RUN echo hello" >> $dockerfile
+            docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
+            docker run --rm throwaway:$CIRCLE_BUILD_NUM 
       - run: which docker    
       - run: docker version
 
