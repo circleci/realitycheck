@@ -12,6 +12,7 @@ workflows:
     jobs:
       - machine1
       - remote_docker
+      - remote_docker_reusable
   feature_jobs:
     jobs:
       - contexts:
@@ -39,7 +40,7 @@ machine: &machine
 
 remote_docker_executor: &remote_docker_executor
   docker: [{image: 'docker:17.06-git'}]
-  
+
 basic_docker_build: &basic_docker_build
   name: "Build a really basic docker image"
   command: |
