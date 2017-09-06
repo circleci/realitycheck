@@ -133,14 +133,14 @@ jobs:
       - run:
           name: Creating Dummy Artifacts
           command: |
-            echo "my artifact file" > /tmp/artifact-1;
+            echo "my artifact file" > /tmp/artifact-1.txt;
             mkdir /tmp/artifacts;
-            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
+            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2.txt;
 
       - store_artifacts:
-          path: /tmp/artifact-1
-          destination: artifact-file
+          path: /tmp/artifact-1.txt
+          destination: artifact-file.txt
 
       - store_artifacts:
-          path: /tmp/artifacts        
+          path: /tmp/artifacts     
 
