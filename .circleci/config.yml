@@ -11,12 +11,17 @@ workflows:
   machine_jobs:
     jobs:
       - machine1
+      - remote_docker
+      - remote_docker_reusable
   feature_jobs:
     jobs:
+      - contexts:
+          context: org-global
       - write_workspace
       - use_workspace:
           requires:
             - write_workspace
+      - write_artifacts
 
 resource-job-default: &resource-job-default
   docker:
@@ -33,6 +38,18 @@ machine: &machine
         sleep $SLEEP
         date
         echo 'Done sleeping.'
+
+remote_docker_executor: &remote_docker_executor
+  docker: [{image: 'docker:17.06-git'}]
+
+basic_docker_build: &basic_docker_build
+  name: "Build a really basic docker image"
+  command: |
+    dockerfile=Dockerfile
+    echo "FROM alpine:latest" > $dockerfile
+    echo "RUN echo hello" >> $dockerfile
+    docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
+    docker run --rm throwaway:$CIRCLE_BUILD_NUM 
 
 jobs:
   small:
@@ -52,6 +69,35 @@ jobs:
     <<: *machine
     environment:
       SLEEP: 1
+
+  remote_docker_reusable:
+    <<: *remote_docker_executor
+    steps:
+      - run: which docker
+      - run: docker -v
+      - setup_remote_docker:
+          reusable: true
+          exclusive: false
+      - run:
+          <<: *basic_docker_build
+      - run: docker version
+
+  remote_docker:
+    <<: *remote_docker_executor
+    steps:
+      - run: which docker
+      - run: docker -v
+      - setup_remote_docker
+      - run:
+          <<: *basic_docker_build
+      - run: docker version      
+
+  contexts:
+    docker:
+      - image: alpine:latest
+    working_directory: /a/contexts/test
+    steps:
+      - run: env | grep CONTEXT_END_TO_END_TEST_VAR
 
   write_workspace:
     docker:
@@ -79,4 +125,22 @@ jobs:
             echo 'Yay, value matches'
             exit 0
           fi
+  write_artifacts:
+    docker:
+      - image: python:3.6.0
+    working_directory: /tmp
+    steps:
+      - run:
+          name: Creating Dummy Artifacts
+          command: |
+            echo "my artifact file" > /tmp/artifact-1.txt;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2.txt;
+
+      - store_artifacts:
+          path: /tmp/artifact-1.txt
+          destination: artifact-file.txt
+
+      - store_artifacts:
+          path: /tmp/artifacts     
 
