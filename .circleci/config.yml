@@ -130,6 +130,7 @@ jobs:
       - image: python:3.6.0
     working_directory: /tmp
     steps:
+      checkout:
       - run:
           name: Creating Dummy Artifacts
           command: |
@@ -145,5 +146,5 @@ jobs:
           path: /tmp/artifacts
 
       - store_test_results:
-          path: ~/test_results
+          path: test_results
 
