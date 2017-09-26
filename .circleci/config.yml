@@ -128,7 +128,7 @@ jobs:
   write_artifacts:
     docker:
       - image: python:3.6.0
-    working_directory: /tmp
+    working_directory: ~/realitycheck
     steps:
       - checkout
       - run:
