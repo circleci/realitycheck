@@ -146,5 +146,5 @@ jobs:
           path: /tmp/artifacts
 
       - store_test_results:
-          path: test_results
+          path: ~/test-results
 
