@@ -22,6 +22,15 @@ workflows:
           requires:
             - write_workspace
       - write_artifacts
+  scheduled_workflow:
+    triggers:
+      - schedule:
+          cron: '* * * * *'
+          filters:
+            branches:
+              only: '/.*/'
+    jobs:
+      - small
 
 resource-job-default: &resource-job-default
   docker:
