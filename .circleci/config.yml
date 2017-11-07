@@ -28,7 +28,7 @@ workflows:
           cron: '* * * * *'
           filters:
             branches:
-              only: '/.*/'
+              only: '/nada_disable_for_now/'
     jobs:
       - small
 
