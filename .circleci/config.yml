@@ -104,6 +104,7 @@ jobs:
   multi-contexts:
     machine: true
     working_directory: /a/contexts/test
+    steps:
       - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
 
   write_workspace:
