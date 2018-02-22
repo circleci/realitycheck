@@ -98,6 +98,7 @@ jobs:
     working_directory: /a/contexts/test
     steps:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
+      - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
 
   write_workspace:
     docker:
