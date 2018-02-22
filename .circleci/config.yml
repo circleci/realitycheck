@@ -17,6 +17,8 @@ workflows:
     jobs:
       - contexts:
           context: org-global
+      - multi-contexts:
+          context: individual-local
       - write_workspace
       - use_workspace:
           requires:
@@ -98,6 +100,10 @@ jobs:
     working_directory: /a/contexts/test
     steps:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
+
+  multi-contexts:
+    machine: true
+    working_directory: /a/contexts/test
       - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
 
   write_workspace:
