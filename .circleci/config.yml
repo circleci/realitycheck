@@ -8,6 +8,7 @@ workflows:
       - medium
       - medium-plus
       - large
+      - xlarge
   machine_jobs:
     jobs:
       - machine1
@@ -64,6 +65,9 @@ jobs:
   large:
     <<: *resource-job-default
     resource_class: large
+  xlarge:
+    <<: *resource-job-default
+    resource_class: xlarge
 
   machine1:
     <<: *machine
