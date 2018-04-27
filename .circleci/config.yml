@@ -39,6 +39,10 @@ jobs:
     <<: *resource_job_defaults
     resource_class: large
 
+  xlarge:
+    <<: *resource_job_defaults
+    resource_class: xlarge
+
   # vm jobs
   machine:
     machine: true
@@ -147,6 +151,7 @@ workflows:
       - medium
       - medium-plus
       - large
+      - xlarge
 
   vm_jobs:
     jobs:
