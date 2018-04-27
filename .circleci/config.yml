@@ -77,8 +77,11 @@ jobs:
     machine:
       docker_layer_caching: true
     steps:
+      - run: which docker
+      - run: docker -v
       - run:
           <<: *basic_docker_build
+      - run: docker version
 
   # feature jobs
   contexts:
