@@ -1,33 +1,10 @@
 version: 2
 debug: true
-workflows:
-  version: 2
-  resource_class_jobs:
-    jobs:
-      - small
-      - medium
-      - medium-plus
-      - large
-  machine_jobs:
-    jobs:
-      - machine1
-      - remote_docker
-      - remote_docker_reusable
-  feature_jobs:
-    jobs:
-      - contexts:
-          context: org-global
-      - write_workspace
-      - use_workspace:
-          requires:
-            - write_workspace
-      - write_artifacts
 
+# yaml anchors
 resource-job-default: &resource-job-default
-  docker:
-    - image: circleci/ruby:2.4.1
-  steps:
-    - run: echo $CIRCLE_JOB
+  docker: [{image: 'circleci/ruby:2.4.1'}]
+  steps: [{run: 'echo $CIRCLE_JOB'}]
 
 machine: &machine
   machine: true
@@ -51,36 +28,33 @@ basic_docker_build: &basic_docker_build
     docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
     docker run --rm throwaway:$CIRCLE_BUILD_NUM
 
+workspaces: &workspaces
+  docker: [{image: 'circleci/node:latest'}]
+  working_directory: ~/foo/bar
+
 jobs:
+  # resource_class_jobs
   small:
     <<: *resource-job-default
     resource_class: small
+
   medium:
     <<: *resource-job-default
     resource_class: medium
+
   medium-plus:
     <<: *resource-job-default
     resource_class: medium+
+
   large:
     <<: *resource-job-default
     resource_class: large
 
+  # machine_jobs
   machine1:
     <<: *machine
     environment:
       SLEEP: 1
-
-  remote_docker_reusable:
-    <<: *remote_docker_executor
-    steps:
-      - run: which docker
-      - run: docker -v
-      - setup_remote_docker:
-          reusable: true
-          exclusive: false
-      - run:
-          <<: *basic_docker_build
-      - run: docker version
 
   remote_docker:
     <<: *remote_docker_executor
@@ -92,6 +66,25 @@ jobs:
           <<: *basic_docker_build
       - run: docker version
 
+  docker_layer_caching:
+    <<: *remote_docker_executor
+    steps:
+      - run: which docker
+      - run: docker -v
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          <<: *basic_docker_build
+      - run: docker version
+
+  machine_dlc:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - run:
+          <<: *basic_docker_build
+
+  # feature_jobs
   contexts:
     docker:
       - image: alpine:latest
@@ -100,9 +93,7 @@ jobs:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
 
   write_workspace:
-    docker:
-      - image: circleci/node:latest
-    working_directory: ~/foo/bar/
+    <<: *workspaces
     steps:
       - run: mkdir stuff
       - run: echo 5 >./stuff/thing
@@ -110,10 +101,9 @@ jobs:
           root: .
           paths:
             - stuff
+
   use_workspace:
-    docker:
-      - image: circleci/node:latest
-    working_directory: ~/foo/bar/
+    <<: *workspaces
     steps:
       - attach_workspace:
            at: ./attached
@@ -125,12 +115,14 @@ jobs:
             echo 'Yay, value matches'
             exit 0
           fi
+
   write_artifacts:
     docker:
       - image: python:3.6.0
     working_directory: ~/realitycheck
     steps:
       - checkout
+
       - run:
           name: Creating Dummy Artifacts
           command: |
@@ -148,3 +140,30 @@ jobs:
       - store_test_results:
           path: test-results
 
+# workflows
+workflows:
+  version: 2
+
+  resource_class_jobs:
+    jobs:
+      - small
+      - medium
+      - medium-plus
+      - large
+
+  machine_jobs:
+    jobs:
+      - machine1
+      - remote_docker
+      - docker_layer_caching
+      - machine_dlc
+
+  feature_jobs:
+    jobs:
+      - contexts:
+          context: org-global
+      - write_workspace
+      - use_workspace:
+          requires:
+            - write_workspace
+      - write_artifacts
