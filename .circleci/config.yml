@@ -101,7 +101,7 @@ jobs:
           paths:
             - stuff
 
-  use_workspace:
+  read_workspace:
     <<: *workspaces_defaults
     steps:
       - attach_workspace:
@@ -115,7 +115,7 @@ jobs:
             exit 0
           fi
 
-  write_artifacts:
+  artifacts_test_results:
     docker:
       - image: python:3.6.0
     working_directory: ~/realitycheck
@@ -160,7 +160,7 @@ workflows:
       - contexts:
           context: org-global
       - write_workspace
-      - use_workspace:
+      - read_workspace:
           requires:
             - write_workspace
-      - write_artifacts
+      - artifacts_test_results
