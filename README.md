@@ -1,6 +1,6 @@
  # realitycheck
 A sample app that reality checks some basic features on your installation of CircleCI:
-1. Runs all known `resource_class` options (*NOTE:* your build instances must be large enough to accomodate these options)
+1. Runs all known `resource_class` options (*NOTE:* your build instances must be large enough to accomodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details)
 2. Runs `machine` executor & `setup_remote_docker` builds, both with and without [Docker Layer Caching](https://circleci.com/docs/2.0/docker-layer-caching)
 3. Read/write workspaces
 4. Tests that the `org-global` context is working (*NOTE:* needs a key called `CONTEXT_END_TO_END_TEST_VAR` to exist in the `org-global` context)
