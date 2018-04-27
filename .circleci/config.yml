@@ -1,22 +1,11 @@
 version: 2
 debug: true
 
-# yaml anchors
-resource-job-default: &resource-job-default
+resource_job_defaults: &resource_job_defaults
   docker: [{image: 'circleci/ruby:2.4.1'}]
   steps: [{run: 'echo $CIRCLE_JOB'}]
 
-machine: &machine
-  machine: true
-  steps:
-    - run: |
-        echo $SLEEP
-        date
-        sleep $SLEEP
-        date
-        echo 'Done sleeping.'
-
-remote_docker_executor: &remote_docker_executor
+remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
 
 basic_docker_build: &basic_docker_build
@@ -28,36 +17,43 @@ basic_docker_build: &basic_docker_build
     docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
     docker run --rm throwaway:$CIRCLE_BUILD_NUM
 
-workspaces: &workspaces
+workspaces_defaults: &workspaces_defaults
   docker: [{image: 'circleci/node:latest'}]
   working_directory: ~/foo/bar
 
 jobs:
-  # resource_class_jobs
+  # resource class jobs
   small:
-    <<: *resource-job-default
+    <<: *resource_job_defaults
     resource_class: small
 
   medium:
-    <<: *resource-job-default
+    <<: *resource_job_defaults
     resource_class: medium
 
   medium-plus:
-    <<: *resource-job-default
+    <<: *resource_job_defaults
     resource_class: medium+
 
   large:
-    <<: *resource-job-default
+    <<: *resource_job_defaults
     resource_class: large
 
-  # machine_jobs
-  machine1:
-    <<: *machine
+  # vm jobs
+  machine:
+    machine: true
+    steps:
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
     environment:
       SLEEP: 1
 
   remote_docker:
-    <<: *remote_docker_executor
+    <<: *remote_docker_defaults
     steps:
       - run: which docker
       - run: docker -v
@@ -67,7 +63,7 @@ jobs:
       - run: docker version
 
   docker_layer_caching:
-    <<: *remote_docker_executor
+    <<: *remote_docker_defaults
     steps:
       - run: which docker
       - run: docker -v
@@ -84,7 +80,7 @@ jobs:
       - run:
           <<: *basic_docker_build
 
-  # feature_jobs
+  # feature jobs
   contexts:
     docker:
       - image: alpine:latest
@@ -93,7 +89,7 @@ jobs:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
 
   write_workspace:
-    <<: *workspaces
+    <<: *workspaces_defaults
     steps:
       - run: mkdir stuff
       - run: echo 5 >./stuff/thing
@@ -103,7 +99,7 @@ jobs:
             - stuff
 
   use_workspace:
-    <<: *workspaces
+    <<: *workspaces_defaults
     steps:
       - attach_workspace:
            at: ./attached
@@ -140,10 +136,8 @@ jobs:
       - store_test_results:
           path: test-results
 
-# workflows
 workflows:
   version: 2
-
   resource_class_jobs:
     jobs:
       - small
@@ -151,9 +145,9 @@ workflows:
       - medium-plus
       - large
 
-  machine_jobs:
+  vm_jobs:
     jobs:
-      - machine1
+      - machine
       - remote_docker
       - docker_layer_caching
       - machine_dlc
