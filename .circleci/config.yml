@@ -27,23 +27,23 @@ workspaces_defaults: &workspaces_defaults
 
 jobs:
   # resource class jobs
-  small:
+  small: # 1 vCPU, 2GB RAM
     <<: *resource_job_defaults
     resource_class: small
 
-  medium:
+  medium: # 2 vCPUs, 4GB RAM
     <<: *resource_job_defaults
     resource_class: medium
 
-  medium-plus:
+  medium-plus: # 3 vCPUs, 6GB RAM
     <<: *resource_job_defaults
     resource_class: medium+
 
-  large:
+  large: # 4 vCPUs, 8GB RAM
     <<: *resource_job_defaults
     resource_class: large
 
-  xlarge:
+  xlarge: # 8 vCPUs, 16GB RAM
     <<: *resource_job_defaults
     resource_class: xlarge
 
