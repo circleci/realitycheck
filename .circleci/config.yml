@@ -1,45 +1,11 @@
 version: 2
 debug: true
-workflows:
-  version: 2
-  resource_class_jobs:
-    jobs:
-      - small
-      - medium
-      - medium-plus
-      - large
-  machine_jobs:
-    jobs:
-      - machine1
-      - remote_docker
-      - remote_docker_reusable
-  feature_jobs:
-    jobs:
-      - contexts:
-          context: org-global
-      - write_workspace
-      - use_workspace:
-          requires:
-            - write_workspace
-      - write_artifacts
 
-resource-job-default: &resource-job-default
-  docker:
-    - image: circleci/ruby:2.4.1
-  steps:
-    - run: echo $CIRCLE_JOB
+resource_job_defaults: &resource_job_defaults
+  docker: [{image: 'circleci/ruby:2.4.1'}]
+  steps: [{run: 'echo $CIRCLE_JOB'}]
 
-machine: &machine
-  machine: true
-  steps:
-    - run: |
-        echo $SLEEP
-        date
-        sleep $SLEEP
-        date
-        echo 'Done sleeping.'
-
-remote_docker_executor: &remote_docker_executor
+remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
 
 basic_docker_build: &basic_docker_build
@@ -51,39 +17,51 @@ basic_docker_build: &basic_docker_build
     docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
     docker run --rm throwaway:$CIRCLE_BUILD_NUM
 
+contexts_defaults: &contexts_defaults
+  docker: [{image: 'alpine:latest'}]
+  working_directory: /a/contexts/test
+
+workspaces_defaults: &workspaces_defaults
+  docker: [{image: 'circleci/node:latest'}]
+  working_directory: ~/foo/bar
+
 jobs:
-  small:
-    <<: *resource-job-default
+  # resource class jobs
+  small: # 1 vCPU, 2GB RAM
+    <<: *resource_job_defaults
     resource_class: small
-  medium:
-    <<: *resource-job-default
+
+  medium: # 2 vCPUs, 4GB RAM
+    <<: *resource_job_defaults
     resource_class: medium
-  medium-plus:
-    <<: *resource-job-default
+
+  medium-plus: # 3 vCPUs, 6GB RAM
+    <<: *resource_job_defaults
     resource_class: medium+
-  large:
-    <<: *resource-job-default
+
+  large: # 4 vCPUs, 8GB RAM
+    <<: *resource_job_defaults
     resource_class: large
 
-  machine1:
-    <<: *machine
+  xlarge: # 8 vCPUs, 16GB RAM
+    <<: *resource_job_defaults
+    resource_class: xlarge
+
+  # vm jobs
+  machine:
+    machine: true
+    steps:
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
     environment:
       SLEEP: 1
 
-  remote_docker_reusable:
-    <<: *remote_docker_executor
-    steps:
-      - run: which docker
-      - run: docker -v
-      - setup_remote_docker:
-          reusable: true
-          exclusive: false
-      - run:
-          <<: *basic_docker_build
-      - run: docker version
-
   remote_docker:
-    <<: *remote_docker_executor
+    <<: *remote_docker_defaults
     steps:
       - run: which docker
       - run: docker -v
@@ -92,17 +70,40 @@ jobs:
           <<: *basic_docker_build
       - run: docker version
 
+  docker_layer_caching:
+    <<: *remote_docker_defaults
+    steps:
+      - run: which docker
+      - run: docker -v
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          <<: *basic_docker_build
+      - run: docker version
+
+  machine_dlc:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - run: which docker
+      - run: docker -v
+      - run:
+          <<: *basic_docker_build
+      - run: docker version
+
+  # feature jobs
   contexts:
-    docker:
-      - image: alpine:latest
-    working_directory: /a/contexts/test
+    <<: *contexts_defaults
     steps:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
 
+  multi-contexts:
+    <<: *contexts_defaults
+    steps:
+      - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
+
   write_workspace:
-    docker:
-      - image: circleci/node:latest
-    working_directory: ~/foo/bar/
+    <<: *workspaces_defaults
     steps:
       - run: mkdir stuff
       - run: echo 5 >./stuff/thing
@@ -110,10 +111,9 @@ jobs:
           root: .
           paths:
             - stuff
-  use_workspace:
-    docker:
-      - image: circleci/node:latest
-    working_directory: ~/foo/bar/
+
+  read_workspace:
+    <<: *workspaces_defaults
     steps:
       - attach_workspace:
            at: ./attached
@@ -125,12 +125,14 @@ jobs:
             echo 'Yay, value matches'
             exit 0
           fi
-  write_artifacts:
+
+  artifacts_test_results:
     docker:
       - image: python:3.6.0
     working_directory: ~/realitycheck
     steps:
       - checkout
+
       - run:
           name: Creating Dummy Artifacts
           command: |
@@ -148,3 +150,31 @@ jobs:
       - store_test_results:
           path: test-results
 
+workflows:
+  version: 2
+  resource_class_jobs:
+    jobs:
+      - small
+      - medium
+      - medium-plus
+      - large
+      - xlarge
+
+  vm_jobs:
+    jobs:
+      - machine
+      - remote_docker
+      - docker_layer_caching
+      - machine_dlc
+
+  feature_jobs:
+    jobs:
+      - contexts:
+          context: org-global
+      - multi-contexts:
+          context: individual-local
+      - write_workspace
+      - read_workspace:
+          requires:
+            - write_workspace
+      - artifacts_test_results
