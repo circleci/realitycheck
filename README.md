@@ -1,4 +1,4 @@
- # realitycheck
+# realitycheck
 A sample app that reality-checks some basic features on your installation of CircleCI:
 1. Runs jobs using all known `resource_class` options (*NOTE:* your build instances must be large enough to accomodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details)
 2. Runs [machine executor](https://circleci.com/docs/2.0/executor-types/#using-machine) & [remote Docker](https://circleci.com/docs/2.0/building-docker-images) jobs, both with and without [Docker Layer Caching](https://circleci.com/docs/2.0/docker-layer-caching)
