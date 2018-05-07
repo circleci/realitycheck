@@ -1,3 +1,6 @@
+version: 2
+debug: true
+
 resource_job_defaults: &resource_job_defaults
   docker: [{image: 'circleci/ruby:2.4.1'}]
   steps: [{run: 'echo $CIRCLE_JOB'}]
@@ -22,7 +25,6 @@ workspaces_defaults: &workspaces_defaults
   docker: [{image: 'circleci/node:latest'}]
   working_directory: ~/foo/bar
 
-version: 2
 jobs:
   # resource class jobs
   small: # 1 vCPU, 2GB RAM
