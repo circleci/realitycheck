@@ -1,5 +1,4 @@
 version: 2
-debug: true
 
 resource_job_defaults: &resource_job_defaults
   docker: [{image: 'circleci/ruby:2.4.1'}]
