@@ -143,7 +143,8 @@ jobs:
             - ./stuff/thing
             
       - run: rm -rf ./stuff/thing
-          
+      - run: sleep 5
+      
       - restore_cache:
             keys:
               - v3-file-cache-{{ .BuildNum }}       
