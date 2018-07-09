@@ -127,11 +127,22 @@ jobs:
 
   
   save_and_restore_cache:
+  
     docker:
       - image: circleci/python
     working_directory: ~/realitycheck
     steps:
       - checkout
+      
+      - run: mkdir -p stuff
+      - run: echo 5 >./stuff/thing
+      
+      - save_cache:
+          key: v3-file-cache
+          paths:
+            - ./stuff/thing
+            
+      - run: rm -rf ./stuff/thing
           
       - restore_cache:
             keys:
@@ -139,18 +150,12 @@ jobs:
               
       - run: |
             if [[ $(< stuff/thing) != '5' ]]; then
-              echo "The cache wasn't populated"
+              exit 1
             else
               echo "The cache was populated"
             fi
       
-      - run: mkdir -p stuff
-      - run: echo 5 >./stuff/thing
-          
-      - save_cache:
-          key: v3-file-cache
-          paths:
-            - ./stuff/thing
+
   
   artifacts_test_results:
     docker:
