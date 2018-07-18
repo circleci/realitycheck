@@ -7,13 +7,11 @@ resource_job_defaults: &resource_job_defaults
     # adjust this CIRCLE_HOSTNAME value accordingly
     CIRCLE_HOSTNAME: https://circleci.com
   steps:
-    # to ensure that this API call proceeds, please add your personal API token
-    # as a project environment variable called CIRCLE_TOKEN
     - run:
         name: verify that job was run with the requested resource_class option
         command: |
           curl \
-          "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_USERNAME/realitycheck/$CIRCLE_BUILD_NUM?circle-token=$CIRCLE_TOKEN" | \
+          "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_USERNAME/realitycheck/$CIRCLE_BUILD_NUM" | \
           jq '.picard.resource_class.class' | grep $CIRCLE_JOB
 
 remote_docker_defaults: &remote_docker_defaults
