@@ -5,7 +5,6 @@ To run realitycheck, fork the repository and start building it on your installat
 
 
 ### `resource_class` workflow
-
 Tests all known `resource_class` options—queries the CircleCI API to verify that jobs ran with the requested resources.
 
 - Your instances must be large enough to accomodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details
@@ -13,7 +12,6 @@ Tests all known `resource_class` options—queries the CircleCI API to verify th
 
 
 ### VM service workflow
-
 Tests the functionality  of the [`machine` executor](https://circleci.com/docs/2.0/executor-types/#using-machine), [Remote Docker Environment](https://circleci.com/docs/2.0/building-docker-images), and [Docker Layer Caching](https://circleci.com/docs/2.0/docker-layer-caching).
 
 
@@ -25,7 +23,6 @@ Tests the functionality  of the [`machine` executor](https://circleci.com/docs/2
 
 
 ## Contributing
-
 If you have more ideas for things that should tested, please submit a PR against the open-source repository on GitHub where this project is maintained: <https://github.com/circleci/realitycheck>.
 
 See the current CI status of the main repo at <https://circleci.com/gh/circleci/workflows/realitycheck>.
