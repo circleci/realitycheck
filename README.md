@@ -7,7 +7,6 @@ To run realitycheck, fork the repository and start building it on your installat
 
 Tests all known `resource_class` options—queries the CircleCI API to verify that jobs ran with the requested resources.
 
-**For hosted CircleCI installations:**
 - Your instances must be large enough to accomodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details
 - API calls require that the base URL of your CircleCI installation is specified in the config.yml file (value defaults to https://circleci.com)
 
