@@ -129,10 +129,8 @@ jobs:
             echo 'Yay, value matches'
             exit 0
           fi
-
   
   save_and_restore_cache:
-  
     docker:
       - image: circleci/python
     working_directory: ~/realitycheck
@@ -160,8 +158,6 @@ jobs:
             else
               echo "The cache was populated"
             fi
-      
-
   
   artifacts_test_results:
     docker:
