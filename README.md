@@ -10,7 +10,8 @@ To run realitycheck, fork the repository and start building it on your installat
 Tests all known `resource_class` options—queries the CircleCI API to verify that jobs ran with the requested resources.
 
 - Your instances must be large enough to accomodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details
-- API calls require that the base URL of your CircleCI installation (e.g., https://circleci.com) is specified via a `CIRCLE_HOSTNAME` project environment variable, and that a personal API token (see `CIRCLE_HOSTNAME`/account/api URL endpoint) is stored as a `CIRCLE_TOKEN` project environment variable
+- The base URL of your CircleCI installation (e.g., https://circleci.com) must be specified via a `CIRCLE_HOSTNAME` project environment variable
+- A personal API token (see `CIRCLE_HOSTNAME`/account/api URL endpoint) must be stored as a `CIRCLE_TOKEN` project environment variable
 
 
 ### VM service workflow
