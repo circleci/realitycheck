@@ -1,4 +1,5 @@
 version: 2
+
 resource_job_defaults: &resource_job_defaults
   docker:  [{image: 'circleci/ruby:2.4.1'}]
   steps:
@@ -104,7 +105,7 @@ jobs:
   multi-contexts:
     <<: *contexts_defaults
     steps:
-      - run: env | grep testing
+      - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
 
   write_workspace:
     <<: *workspaces_defaults
@@ -129,10 +130,8 @@ jobs:
             echo 'Yay, value matches'
             exit 0
           fi
-
   
   save_and_restore_cache:
-  
     docker:
       - image: circleci/python
     working_directory: ~/realitycheck
@@ -160,8 +159,6 @@ jobs:
             else
               echo "The cache was populated"
             fi
-      
-
   
   artifacts_test_results:
     docker:
@@ -210,7 +207,7 @@ workflows:
       - contexts:
           context: org-global
       - multi-contexts:
-          context: brand NEW CONTEDXTTtt
+          context: individual-local
       - write_workspace
       - read_workspace:
           requires:
