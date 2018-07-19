@@ -11,7 +11,7 @@ Tests all known `resource_class` options—queries the CircleCI API to verify th
 
 - Your instances must be large enough to accomodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details
 - The base URL of your CircleCI installation (e.g., https://circleci.com) must be specified via a `CIRCLE_HOSTNAME` project environment variable
-- A personal API token (see `CIRCLE_HOSTNAME`/account/api URL endpoint) must be stored as a `CIRCLE_TOKEN` project environment variable
+- A personal API token (see `CIRCLE_HOSTNAME/account/api` URL endpoint) must be stored as a `CIRCLE_TOKEN` project environment variable
 
 
 ### VM service workflow
