@@ -1,4 +1,5 @@
 version: 2
+
 resource_job_defaults: &resource_job_defaults
   docker:  [{image: 'circleci/ruby:2.4.1'}]
   steps:
@@ -6,7 +7,7 @@ resource_job_defaults: &resource_job_defaults
         name: verify that job ran with the requested resource_class option
         command: |
           curl \
-          "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/realitycheck/$CIRCLE_BUILD_NUM" | \
+          "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/realitycheck/$CIRCLE_BUILD_NUM"?circle-token=$CIRCLE_TOKEN | \
           jq '.picard.resource_class.class' | grep $CIRCLE_JOB
 
 remote_docker_defaults: &remote_docker_defaults
