@@ -3,9 +3,6 @@ version: 2
 resource_job_defaults: &resource_job_defaults
   docker:  [{image: 'circleci/ruby:2.4.1'}]
   environment:
-    # if you are running realitycheck on a hosted installation of CircleCI,
-    # adjust this CIRCLE_HOSTNAME value accordingly
-    CIRCLE_HOSTNAME: https://circleci.com
   steps:
     - run:
         name: verify that job ran with the requested resource_class option
