@@ -104,7 +104,7 @@ jobs:
   multi-contexts:
     <<: *contexts_defaults
     steps:
-      - run: env | grep testing
+      - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
 
   write_workspace:
     <<: *workspaces_defaults
@@ -210,7 +210,7 @@ workflows:
       - contexts:
           context: org-global
       - multi-contexts:
-          context: brand NEW CONTEDXTTtt
+          context: individual-local
       - write_workspace
       - read_workspace:
           requires:
