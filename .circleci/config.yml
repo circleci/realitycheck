@@ -6,7 +6,7 @@ resource_job_defaults: &resource_job_defaults
     - run:
         name: verify that job ran with the requested resource_class option
         command: |
-          curl \
+          curl -k \
           "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/realitycheck/$CIRCLE_BUILD_NUM?\
           circle-token=$CIRCLE_TOKEN" | \
           jq '.picard.resource_class.class' | grep $CIRCLE_JOB
