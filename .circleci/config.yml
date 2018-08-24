@@ -51,6 +51,8 @@ jobs:
   machine:
     machine: true
     steps:
+      - run:
+          <<: *basic_docker_build
       - run: |
           echo $SLEEP
           date
