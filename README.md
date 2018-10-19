@@ -2,8 +2,23 @@
 
 A sample app that reality-checks some basic CircleCI features in three parallel workflows.
 
-To run realitycheck, fork the repository and start building it on your installation of CircleCI. Descriptions of the three workflows follow.
+## Running Reality Check on your CircleCI Installation
+To run realitycheck, fork/clone the repository and start building it on your installation of CircleCI. Descriptions of the three workflows follow.
 
+### CircleCI Installations using GitHub.com
+If you're CircleCI instance is connected with GitHub.com you can fork this repository, and import it to CircleCI from your organization's "Add Project" page.
+
+
+### CircleCI Installations using GitHub Enterprise
+If you're CircleCI instance is connected to a private GitHub Enterprise instance, **you will need to first create an empty repository in GHE** (do not intialize with a README!), and then pull/push this repo to your GHE instance before you can import it to CircleCI from your organization's "Add Project" page.
+
+```
+git pull git@github.com:circleci/realitycheck.git && cd realitycheck
+git remote set-url origin <your-ghe-repo-url>
+git push
+```
+
+## Reality Check Workflows
 
 ### `resource_class` workflow
 
