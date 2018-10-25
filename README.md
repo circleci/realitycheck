@@ -2,8 +2,9 @@
 
 A sample app that validates some basic CircleCI features in three parallel workflows.
 
-To run realitycheck, fork the repository and start building it on your installation of CircleCI. Descriptions of the three workflows follow.
+To run realitycheck, fork the repository and start building it on your installation of CircleCI. See [Using realitycheck to validate your CircleCI installation](https://support.circleci.com/hc/en-us/articles/360011235534), in the CircleCI Support Center, for details on forking the project and building it on your CircleCI installation.
 
+Descriptions of the three workflows follow.
 
 ### `resource_class` workflow
 
