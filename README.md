@@ -1,6 +1,6 @@
 # realitycheck
 
-A sample app that reality checks some basic CircleCI features in three parallel workflows.
+A sample app that validates some basic CircleCI features in three parallel workflows.
 
 To run realitycheck, fork the repository and start building it on your installation of CircleCI. Descriptions of the three workflows follow.
 
