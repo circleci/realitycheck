@@ -119,7 +119,7 @@ jobs:
            at: ./attached
       - run: |
           if [[ $(< ./attached/stuff/thing) != '5' ]]; then
-            echo 'Sadness, more of thevalue is not what we expected, so the workspace write/read did not work'
+            echo 'Sadness, value is not what we expected, so the workspace write/read did not work'
             exit 1
           else
             echo 'Yay, value matches'
