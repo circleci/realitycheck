@@ -10,6 +10,11 @@ resource_job_defaults: &resource_job_defaults
           "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
           circle-token=$CIRCLE_TOKEN" | \
           jq '.picard.resource_class.class' | grep $CIRCLE_JOB
+    - run:
+        name: Error tips
+        when: on_fail
+        command: |
+          echo "Please check that you have set the CIRCLE_HOSTNAME and CIRCLE_TOKEN variables as explained in this project's README.md"
 
 remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
@@ -104,11 +109,21 @@ jobs:
     <<: *contexts_defaults
     steps:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
+      - run:
+          name: Error tips
+          when: on_fail
+          command: |
+            echo "Please check that you have set the CONTEXT_END_TO_END_TEST_VAR variable in a context name `individual-local` as explained in this project's README.md"
 
   multi-contexts:
     <<: *contexts_defaults
     steps:
       - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
+      - run:
+          name: Error tips
+          when: on_fail
+          command: |
+            echo "Please check that you have set the MULTI_CONTEXT_END_TO_END_VAR variable in a context name `org-global` as explained in this project's README.md"
 
   write_workspace:
     <<: *workspaces_defaults
