@@ -101,7 +101,16 @@ jobs:
   contexts:
     <<: *contexts_defaults
     steps:
-      - run: if [ -n $(env | grep CONTEXT_END_TO_END_TEST_VAR) ] ; then exit 0 ; else exit 1 ; fi
+      - run:
+          name: Context name exists
+          command: |
+              if [ -n $(env | grep CONTEXT_END_TO_END_TEST_VAR) ]; then
+                echo "Contexts have been configured correctly"
+                exit 0 
+              else 
+                echo "CONTEXT_END_TO_END_TEST_VAR does not seem to exist. Please confirm that it does, and contact your account team if you're still experiencing issues"
+                exit 1
+              fi
 
   multi-contexts:
     <<: *contexts_defaults
