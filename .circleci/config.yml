@@ -139,22 +139,32 @@ jobs:
     steps:
       - checkout
 
-      - run: mkdir -p stuff
-      - run: echo 5 >./stuff/thing
+      - run:
+          name: Create dir to be cached
+          command: mkdir -p stuff
+      - run:
+          name: Create cache file
+          command: echo 5 >./stuff/thing
 
       - save_cache:
           key: v3-file-cache-{{ .BuildNum }}
           paths:
             - ./stuff/thing
 
-      - run: rm -rf ./stuff/thing
-      - run: sleep 5
+      - run:
+          name: Delete cache folder
+          command: rm -rf ./stuff/thing
+      - run:
+          name: Sleep to prevent race conditionn
+          command: sleep 5
 
       - restore_cache:
             keys:
               - v3-file-cache-{{ .BuildNum }}
 
-      - run: |
+      - run:
+          name: Verify cache population
+          command: |
             if [[ $(< stuff/thing) != '5' ]]; then
               exit 1
             else
