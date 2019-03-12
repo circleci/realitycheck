@@ -207,13 +207,13 @@ workflows:
   vm_jobs:
     jobs:
       - machine
-      - remote_docker
+      - remote_docker:
           requires:
             - machine
-      - docker_layer_caching
+      - docker_layer_caching:
           requires:
             - machine
-      - machine_dlc
+      - machine_dlc:
           requires:
             - machine
 
