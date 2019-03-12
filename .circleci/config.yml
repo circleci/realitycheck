@@ -101,7 +101,7 @@ jobs:
   contexts:
     <<: *contexts_defaults
     steps:
-      - run: env | grep CONTEXT_END_TO_END_TEST_VAR
+      - run: if [ -n $(env | grep CONTEXT_END_TO_END_TEST_VAR) ] ; then exit 0 ; else exit 1 ; fi
 
   multi-contexts:
     <<: *contexts_defaults
