@@ -75,6 +75,9 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+      - run:
+          command: echo 'ToDo'
+          when: on_fail
 
   docker_layer_caching:
     <<: *remote_docker_defaults
@@ -86,6 +89,9 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+      - run:
+          command: echo 'ToDo'
+          when: on_fail
 
   machine_dlc:
     machine:
@@ -96,6 +102,9 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+      - run:
+          command: echo 'ToDo'
+          when: on_fail
 
   # feature jobs
   contexts:
@@ -199,8 +208,14 @@ workflows:
     jobs:
       - machine
       - remote_docker
+          requires:
+            - machine
       - docker_layer_caching
+          requires:
+            - machine
       - machine_dlc
+          requires:
+            - machine
 
   feature_jobs:
     jobs:
