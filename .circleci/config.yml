@@ -129,8 +129,12 @@ jobs:
   write_workspace:
     <<: *workspaces_defaults
     steps:
-      - run: mkdir stuff
-      - run: echo 5 >./stuff/thing
+      - run:
+          name: Create workspace directory
+          command: mkdir -p stuff
+      - run:
+          name: Create workspace file
+          command: echo 5 > ./stuff/thing
       - persist_to_workspace:
           root: .
           paths:
