@@ -129,18 +129,40 @@ jobs:
   contexts:
     <<: *contexts_defaults
     steps:
-      - run: env | grep CONTEXT_END_TO_END_TEST_VAR
+      - run:
+          name: Test Contexts functionality
+          command: |
+              if [ -n $(env | grep CONTEXT_END_TO_END_TEST_VAR) ]; then
+                echo "All systems nominal"
+                exit 0 
+              else 
+                echo "CONTEXT_END_TO_END_TEST_VAR does not seem to exist. Please confirm that it does, and contact your account team if you're still experiencing issues"
+                exit 1
+              fi
 
   multi-contexts:
     <<: *contexts_defaults
     steps:
-      - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
+      - run:
+          name: Test Multiple Contexts functionality
+          command: |
+              if [ -n $(env | grep MULTI_CONTEXT_END_TO_END_VAR) ]; then
+                echo "All systems nominal"
+                exit 0 
+              else 
+                echo "MULTI_END_TO_END_TEST_VAR does not seem to exist. Please confirm that it does, and contact your account team if you're still experiencing issues"
+                exit 1
+              fi
 
   write_workspace:
     <<: *workspaces_defaults
     steps:
-      - run: mkdir stuff
-      - run: echo 5 >./stuff/thing
+      - run:
+          name: Create workspace directory
+          command: mkdir -p stuff
+      - run:
+          name: Create workspace file
+          command: echo 5 > ./stuff/thing
       - persist_to_workspace:
           root: .
           paths:
@@ -167,22 +189,32 @@ jobs:
     steps:
       - checkout
 
-      - run: mkdir -p stuff
-      - run: echo 5 >./stuff/thing
+      - run:
+          name: Create dir to be cached
+          command: mkdir -p stuff
+      - run:
+          name: Create cache file
+          command: echo 5 >./stuff/thing
 
       - save_cache:
           key: v3-file-cache-{{ .BuildNum }}
           paths:
             - ./stuff/thing
 
-      - run: rm -rf ./stuff/thing
-      - run: sleep 5
+      - run:
+          name: Delete cache folder
+          command: rm -rf ./stuff/thing
+      - run:
+          name: Sleep to prevent race conditionn
+          command: sleep 5
 
       - restore_cache:
             keys:
               - v3-file-cache-{{ .BuildNum }}
 
-      - run: |
+      - run:
+          name: Verify cache population
+          command: |
             if [[ $(< stuff/thing) != '5' ]]; then
               exit 1
             else
