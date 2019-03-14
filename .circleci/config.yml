@@ -91,6 +91,10 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+      - run:
+          name: Error Message
+          command: echo 'setup_remote_docker has failed. Please confirm VM Provider settings in Management Console Dashboard.'
+          when: on_fail
 
   docker_layer_caching:
     <<: *remote_docker_defaults
@@ -102,6 +106,10 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+      - run:
+          name: Error Message
+          command: echo 'docker_layer_caching has failed. Please confirm VM Provider settings in Management Console Dashboard.'
+          when: on_fail
 
   machine_dlc:
     machine:
@@ -112,6 +120,10 @@ jobs:
       - run:
           <<: *basic_docker_build
       - run: docker version
+      - run:
+          name: Error Message
+          command: echo 'docker_layer_caching on machine executer has failed. Please confirm VM Provider settings in Management Console Dashboard.'
+          when: on_fail
 
   # feature jobs
   contexts:
@@ -214,9 +226,15 @@ workflows:
   vm_jobs:
     jobs:
       - machine
-      - remote_docker
-      - docker_layer_caching
-      - machine_dlc
+      - remote_docker:
+          requires:
+            - machine
+      - docker_layer_caching:
+          requires:
+            - machine
+      - machine_dlc:
+          requires:
+            - machine
 
   feature_jobs:
     jobs:
