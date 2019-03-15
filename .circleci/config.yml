@@ -245,6 +245,16 @@ jobs:
       - store_test_results:
           path: test-results
 
+  parallelism:
+    docker:
+      - image: python:3.6.0
+    parallelism: 2
+    working_directory: ~/realitycheck
+    steps:
+      - checkout
+      - store_test_results:
+          path: test-results
+
 workflows:
   version: 2
   resource_class_jobs:
@@ -279,4 +289,6 @@ workflows:
       - read_workspace:
           requires:
             - write_workspace
-      - artifacts_test_results 
+      - artifacts_test_results
+      - parallelism
+      
