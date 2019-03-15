@@ -14,8 +14,8 @@ resource_job_defaults: &resource_job_defaults
             echo "The resource class check was successful."
 
     - run: 
-        - when: on_fail
-        - command: | 
+        when: on_fail
+        command: | 
           echo "Please check that all environment variables such as CIRCLE_HOSTNAME and CIRCLE_TOKEN are set at https://circleci.com/gh/$CIRCLE_PROJECT_REPONAME/realitycheck/edit#env-vars."
 
 remote_docker_defaults: &remote_docker_defaults
@@ -42,11 +42,11 @@ jobs:
   # check requirements 
   hostname: 
     run: 
-      - command: | 
+      command: | 
       # check if the hostname is not empty and 
           echo $CIRCLE_HOSTNAME
     run: 
-      - when: on_fail
+      when: on_fail
 
   # resource class jobs
   small: # 1 vCPU, 2GB RAM
