@@ -4,15 +4,25 @@ A sample app that validates some basic CircleCI features in three parallel workf
 
 To run realitycheck, fork the repository and start building it on your installation of CircleCI. See [Using realitycheck to validate your CircleCI installation](https://support.circleci.com/hc/en-us/articles/360011235534), in the CircleCI Support Center, for details on forking the project and building it on your CircleCI installation.
 
-Descriptions of the three workflows follow.
+Descriptions of the three workflows follow the instructions on how to set context and environmental variables.
+
+### Setting Environment Variables and Contexts
+#### Project Environment Variables
+Set environment variables at `/realitycheck/edit#env-vars`.
+  
+- The base URL of your CircleCI installation (e.g. https://circleci.com) must be specified via a `CIRCLE_HOSTNAME` project environment variable
+- A personal API token (see `CIRCLE_HOSTNAME/account/api` URL endpoint) must be stored as a `CIRCLE_TOKEN` project environment variable
+#### Contexts
+These can be found under `/settings`
+- Add a key called `MULTI_CONTEXT_END_TO_END_VAR` with any value to exist in a context called `individual-local`
+- Add a key called `CONTEXT_END_TO_END_TEST_VAR` with any value to exist in a context called `org-global`
 
 ### `resource_class` workflow
 
 Tests all known `resource_class` options—queries the CircleCI API to verify that jobs ran with the requested resources.
 
 - Your instances must be large enough to accommodate these options—see our [Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#resource_class) for details
-- The base URL of your CircleCI installation (e.g. https://circleci.com) must be specified via a `CIRCLE_HOSTNAME` project environment variable
-- A personal API token (see `CIRCLE_HOSTNAME/account/api` URL endpoint) must be stored as a `CIRCLE_TOKEN` project environment variable
+
 
 
 ### VM service workflow
