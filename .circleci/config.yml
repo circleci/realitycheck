@@ -214,3 +214,13 @@ workflows:
           requires:
             - write_workspace
       - artifacts_test_results
+
+      filters:
+
+         tags:
+
+           only: /^[0-9]+\.[0-9]+\.[0-9](\.RC\d*)?$/
+
+         branches:
+
+           ignore: /.*/
