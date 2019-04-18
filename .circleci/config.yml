@@ -59,6 +59,20 @@ jobs:
           echo 'Done sleeping.'
     environment:
       SLEEP: 1
+      
+      
+   machine:
+    resource_class: gpu.small
+    steps:
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
 
   remote_docker:
     <<: *remote_docker_defaults
@@ -152,29 +166,30 @@ jobs:
 
 workflows:
   version: 2
-  resource_class_jobs:
-    jobs:
-      - small
-      - medium
-      - medium-plus
-      - large
-      - xlarge
+#   resource_class_jobs:
+#     jobs:
+#       - small
+#       - medium
+#       - medium-plus
+#       - large
+#       - xlarge
 
   vm_jobs:
     jobs:
-      - machine
-      - remote_docker
-      - docker_layer_caching
-      - machine_dlc
+        - gpu
+#       - machine
+#       - remote_docker
+#       - docker_layer_caching
+#       - machine_dlc
 
-  feature_jobs:
-    jobs:
-      - contexts:
-          context: org-global
-      - multi-contexts:
-          context: individual-local
-      - write_workspace
-      - read_workspace:
-          requires:
-            - write_workspace
-      - artifacts_test_results
+#   feature_jobs:
+#     jobs:
+#       - contexts:
+#           context: org-global
+#       - multi-contexts:
+#           context: individual-local
+#       - write_workspace
+#       - read_workspace:
+#           requires:
+#             - write_workspace
+#       - artifacts_test_results
