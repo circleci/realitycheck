@@ -166,7 +166,7 @@ workflows:
       - remote_docker
       - hold:
           type: approval
-      - docker_layer_caching
+      - docker_layer_caching:
           requires:
             - hold
       - machine_dlc
