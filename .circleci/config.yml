@@ -95,7 +95,7 @@ jobs:
   contexts:
     <<: *contexts_defaults
     steps:
-      - run: env | grep CONTEXT_END_TO_END_TEST_VAR
+      - blah: env | grep CONTEXT_END_TO_END_TEST_VAR
 
   multi-contexts:
     <<: *contexts_defaults
