@@ -164,11 +164,7 @@ workflows:
     jobs:
       - machine
       - remote_docker
-      - hold:
-          type: approval
-      - docker_layer_caching:
-          requires:
-            - hold
+      - docker_layer_caching
       - machine_dlc
 
   feature_jobs:
