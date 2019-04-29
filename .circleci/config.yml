@@ -151,7 +151,7 @@ jobs:
           path: test-results
 
 workflows:
-  #version: 2
+  version: 2
   resource_class_jobs:
     jobs:
       - small
@@ -161,7 +161,7 @@ workflows:
       - xlarge
 
   vm_jobs:
-    jobs:
+    job:
       - machine
       - remote_docker
       - docker_layer_caching
