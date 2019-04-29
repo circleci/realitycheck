@@ -161,7 +161,7 @@ workflows:
       - xlarge
 
   vm_jobs:
-    job:
+    jobs:
       - machine
       - remote_docker
       - docker_layer_caching
