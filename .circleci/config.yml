@@ -1,9 +1,15 @@
 version: 2
-debug: true
 
 resource_job_defaults: &resource_job_defaults
-  docker: [{image: 'circleci/ruby:2.4.1'}]
-  steps: [{run: 'echo $CIRCLE_JOB'}]
+  docker:  [{image: 'circleci/ruby:2.4.1'}]
+  steps:
+    - run:
+        name: verify that job ran with the requested resource_class option
+        command: |
+          curl -k \
+          "$CIRCLE_HOSTNAME/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
+          circle-token=$CIRCLE_TOKEN" | \
+          jq '.picard.resource_class.class' | grep $CIRCLE_JOB
 
 remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
@@ -35,7 +41,7 @@ jobs:
     <<: *resource_job_defaults
     resource_class: medium
 
-  medium-plus: # 3 vCPUs, 6GB RAM
+  medium+: # 3 vCPUs, 6GB RAM
     <<: *resource_job_defaults
     resource_class: medium+
 
@@ -126,6 +132,35 @@ jobs:
             exit 0
           fi
 
+  save_and_restore_cache:
+    docker:
+      - image: circleci/python
+    working_directory: ~/realitycheck
+    steps:
+      - checkout
+
+      - run: mkdir -p stuff
+      - run: echo 5 >./stuff/thing
+
+      - save_cache:
+          key: v3-file-cache-{{ .BuildNum }}
+          paths:
+            - ./stuff/thing
+
+      - run: rm -rf ./stuff/thing
+      - run: sleep 5
+
+      - restore_cache:
+            keys:
+              - v3-file-cache-{{ .BuildNum }}
+
+      - run: |
+            if [[ $(< stuff/thing) != '5' ]]; then
+              exit 1
+            else
+              echo "The cache was populated"
+            fi
+
   artifacts_test_results:
     docker:
       - image: python:3.6.0
@@ -156,7 +191,7 @@ workflows:
     jobs:
       - small
       - medium
-      - medium-plus
+      - medium+
       - large
       - xlarge
 
@@ -169,6 +204,7 @@ workflows:
 
   feature_jobs:
     jobs:
+      - save_and_restore_cache
       - contexts:
           context: org-global
       - multi-contexts:
@@ -178,4 +214,3 @@ workflows:
           requires:
             - write_workspace
       - artifacts_test_results
- 
