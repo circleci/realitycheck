@@ -202,10 +202,6 @@ workflows:
       - docker_layer_caching
       - machine_dlc
 
-  test_workflow: 
-    test_jobs:
-      -test_job
-
   feature_jobs:
     jobs:
       - save_and_restore_cache
