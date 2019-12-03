@@ -132,6 +132,19 @@ jobs:
             exit 0
           fi
 
+  pre_work:
+    steps:
+      - run: "echo Requesting approval"
+
+  manual_approval:
+    type: approval
+    requires:
+      - pre_work
+
+  success:
+    steps:
+      - run: echo "Job Approved!"
+
   save_and_restore_cache:
     docker:
       - image: circleci/python
@@ -214,4 +227,9 @@ workflows:
           requires:
             - write_workspace
       - artifacts_test_results
-
+      
+  approval_jobs:
+    jobs:
+      - pre_work
+      - manual_approval
+      - success
