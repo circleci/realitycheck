@@ -4,6 +4,15 @@ resource_job_defaults: &resource_job_defaults
   docker:  [{image: 'circleci/ruby:2.4.1'}]
   steps:
     - run:
+        name: verify required Environment Variables
+        command: |
+          if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
+            echo "You must provide 2 Environment Variables in project settings for this job to run."
+            echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
+            echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
+            exit 1
+          fi
+    - run:
         name: verify that job ran with the requested resource_class option
         command: |
           curl -k \
