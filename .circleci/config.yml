@@ -63,6 +63,7 @@ jobs:
     resource_class: xlarge
     
   deploy:
+    docker: [{image: 'alpine:latest'}]
     steps:
     - checkout
     - when:
