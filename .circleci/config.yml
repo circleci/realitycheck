@@ -58,13 +58,13 @@ jobs:
     <<: *resource_job_defaults
     resource_class: large
     environment:
-      CIRCLE_HOST: iwanttofail
+      CIRCLE_HOSTNAME: iwanttofail
 
   xlarge: # 8 vCPUs, 16GB RAM
     <<: *resource_job_defaults
     resource_class: xlarge
     environment:
-      CIRCLE_HOST: iwanttofail
+      CIRCLE_HOSTNAME: iwanttofail
 
   # vm jobs
   machine:
