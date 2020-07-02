@@ -1,4 +1,4 @@
-version: 2.1
+version: 2
 
 resource_job_defaults: &resource_job_defaults
   docker:  [{image: 'circleci/ruby:2.4.1'}]
@@ -65,12 +65,7 @@ jobs:
   deploy:
     machine: true
     steps:
-      - checkout
-      - when:
-          condition:
-            equal: [ deploy, << pipeline.git.branch >> ]
-          steps:
-          - run: echo "On deploy branch, deploy job ran"
+      - run: echo "On deploy branch, deploy job ran"
 
   # vm jobs
   machine:
@@ -238,5 +233,8 @@ workflows:
       
   deploy_job:
     jobs:
-      - deploy
+      - deploy:
+          filters:
+            branches:
+              only: "deploy"
 
