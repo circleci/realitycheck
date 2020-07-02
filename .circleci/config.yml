@@ -63,14 +63,14 @@ jobs:
     resource_class: xlarge
     
   deploy:
-    docker: [{image: 'alpine:latest'}]
+    machine: true
     steps:
-    - checkout
-    - when:
-        condition:
-          equal: [ deploy, << pipeline.git.branch >> ]
-        steps:
-        - run: echo "On deploy branch, deploy job ran"
+      - checkout
+      - when:
+          condition:
+            equal: [ deploy, << pipeline.git.branch >> ]
+          steps:
+          - run: echo "On deploy branch, deploy job ran"
 
   # vm jobs
   machine:
