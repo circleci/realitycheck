@@ -1,73 +1,106 @@
-version: 2
+version: 2.1
 
-resource_job_defaults: &resource_job_defaults
-  docker:  [{image: 'circleci/ruby:2.4.1'}]
-  steps:
-    - run:
-        name: verify required Environment Variables
-        command: |
-          if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
-            echo "You must provide 2 Environment Variables in project settings for this job to run."
-            echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
-            echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
-            exit 1
-          fi
-    - run:
-        name: verify that job ran with the requested resource_class option
-        command: |
-          curl -k \
-          "${CIRCLE_HOSTNAME%/}/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
-          circle-token=$CIRCLE_TOKEN" | \
-          jq '.picard.resource_class.class' | grep $CIRCLE_JOB
+executors:
+  resource_job_executor:
+    parameters:
+      resource_class_name:
+        type: string
+    docker:
+      - image: 'circleci/ruby:2.4.1'
+    resource_class: << parameters.resource_class_name >>
 
-remote_docker_defaults: &remote_docker_defaults
-  docker: [{image: 'docker:17.06-git'}]
+  remote_docker_defaults:
+    docker:
+      - image: 'docker:17.06-git'
 
-basic_docker_build: &basic_docker_build
-  name: "Build a really basic docker image"
-  command: |
-    dockerfile=Dockerfile
-    echo "FROM alpine:latest" > $dockerfile
-    echo "RUN echo hello" >> $dockerfile
-    docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
-    docker run --rm throwaway:$CIRCLE_BUILD_NUM
+  contexts_defaults:
+    docker:
+      - image: 'alpine:latest'
+    working_directory: /a/contexts/test
 
-contexts_defaults: &contexts_defaults
-  docker: [{image: 'alpine:latest'}]
-  working_directory: /a/contexts/test
+  workspaces_defaults:
+    docker: 
+      - image: 'circleci/node:latest'
+    working_directory: ~/foo/bar
 
-workspaces_defaults: &workspaces_defaults
-  docker: [{image: 'circleci/node:latest'}]
-  working_directory: ~/foo/bar
+commands: 
+  resource_job_default_commands:
+    steps:
+      - run:
+          name: verify required Environment Variables
+          command: |
+            if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
+              echo "You must provide 2 Environment Variables in project settings for this job to run."
+              echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
+              echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
+              exit 1
+            fi
+      - run:
+          name: verify that job ran with the requested resource_class option
+          command: |
+            if [ $CIRCLE_JOB = "medium-plus" ]; then
+              export CIRCLE_JOB_NAME=medium+
+            else
+              export CIRCLE_JOB_NAME=$CIRCLE_JOB
+            fi
+            curl -k \
+            "${CIRCLE_HOSTNAME%/}/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
+            circle-token=$CIRCLE_TOKEN" | \
+            jq '.picard.resource_class.class' | grep $CIRCLE_JOB_NAME
+
+  basic_docker_build:
+    steps:
+      - run:
+          name: "Build a really basic docker image"
+          command: |
+            dockerfile=Dockerfile
+            echo "FROM alpine:latest" > $dockerfile
+            echo "RUN echo hello" >> $dockerfile
+            docker build -f $dockerfile --tag throwaway:$CIRCLE_BUILD_NUM .
+            docker run --rm throwaway:$CIRCLE_BUILD_NUM
 
 jobs:
   # resource class jobs
   small: # 1 vCPU, 2GB RAM
-    <<: *resource_job_defaults
-    resource_class: small
+    executor:
+      name: resource_job_executor
+      resource_class_name: small
+    steps:
+      - resource_job_default_commands
 
   medium: # 2 vCPUs, 4GB RAM
-    <<: *resource_job_defaults
-    resource_class: medium
+    executor:
+      name: resource_job_executor
+      resource_class_name: medium
+    steps:
+      - resource_job_default_commands
 
-  medium+: # 3 vCPUs, 6GB RAM
-    <<: *resource_job_defaults
-    resource_class: medium+
+  medium-plus: # 3 vCPUs, 6GB RAM
+    executor:
+      name: resource_job_executor
+      resource_class_name: medium+
+    steps:
+      - resource_job_default_commands
 
   large: # 4 vCPUs, 8GB RAM
-    <<: *resource_job_defaults
-    resource_class: large
+    executor:
+      name: resource_job_executor
+      resource_class_name: large
+    steps:
+      - resource_job_default_commands
 
   xlarge: # 8 vCPUs, 16GB RAM
-    <<: *resource_job_defaults
-    resource_class: xlarge
+    executor:
+      name: resource_job_executor
+      resource_class_name: xlarge
+    steps:
+      - resource_job_default_commands
 
   # vm jobs
   machine:
     machine: true
     steps:
-      - run:
-          <<: *basic_docker_build
+      - basic_docker_build
       - run: |
           echo $SLEEP
           date
@@ -78,24 +111,24 @@ jobs:
       SLEEP: 1
 
   remote_docker:
-    <<: *remote_docker_defaults
+    executor:
+      name: remote_docker_defaults
     steps:
       - run: which docker
       - run: docker -v
       - setup_remote_docker
-      - run:
-          <<: *basic_docker_build
+      - basic_docker_build
       - run: docker version
 
   docker_layer_caching:
-    <<: *remote_docker_defaults
+    executor:
+      name: remote_docker_defaults
     steps:
       - run: which docker
       - run: docker -v
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          <<: *basic_docker_build
+      - basic_docker_build
       - run: docker version
 
   machine_dlc:
@@ -104,23 +137,25 @@ jobs:
     steps:
       - run: which docker
       - run: docker -v
-      - run:
-          <<: *basic_docker_build
+      - basic_docker_build
       - run: docker version
 
   # feature jobs
   contexts:
-    <<: *contexts_defaults
+    executor:
+      name: contexts_defaults
     steps:
       - run: env | grep CONTEXT_END_TO_END_TEST_VAR
 
   multi-contexts:
-    <<: *contexts_defaults
+    executor:
+      name: contexts_defaults
     steps:
       - run: env | grep MULTI_CONTEXT_END_TO_END_VAR
 
   write_workspace:
-    <<: *workspaces_defaults
+    executor:
+      name: workspaces_defaults
     steps:
       - run: mkdir stuff
       - run: echo 5 >./stuff/thing
@@ -130,7 +165,8 @@ jobs:
             - stuff
 
   read_workspace:
-    <<: *workspaces_defaults
+    executor:
+      name: workspaces_defaults
     steps:
       - attach_workspace:
            at: ./attached
@@ -202,7 +238,7 @@ workflows:
     jobs:
       - small
       - medium
-      - medium+
+      - medium-plus
       - large
       - xlarge
 
