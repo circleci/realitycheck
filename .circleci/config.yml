@@ -63,9 +63,35 @@ jobs:
     <<: *resource_job_defaults
     resource_class: xlarge
 
-  # vm jobs
-  machine:
+  # check if EC2
+  run_arm_jobs_if_ec2:
     machine: true
+    steps:
+      - run: |
+          result=$(curl http://169.254.169.254/latest/meta-data/instance-type)
+          if [[ $result == *"Not Found"* ]]; then exit 1; fi
+    environment:
+      SLEEP: 1
+
+  # linux jobs
+  medium_linux:
+    machine: true
+    resource_class: medium
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+  
+  large_linux:
+    machine: true
+    resource_class: large
     steps:
       - run:
           <<: *basic_docker_build
@@ -78,6 +104,143 @@ jobs:
     environment:
       SLEEP: 1
 
+  xlarge_linux:
+    machine: true
+    resource_class: xlarge
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  2xlarge_linux:
+    machine: true
+    resource_class: 2xlarge
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  # windows jobs
+  medium_windows:
+    machine:
+      image: windows-default
+    resource_class: medium
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  large_windows:
+    machine:
+      image: windows-default
+    resource_class: large
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  xlarge_windows:
+    machine:
+      image: windows-default
+    resource_class: xlarge
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  2xlarge_windows:
+    machine:
+      image: windows-default
+    resource_class: 2xlarge
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  windows-medium:
+    machine:
+      image: windows-default # Windows machine image
+    resource_class: windows.medium
+    steps:
+      - checkout
+      - run: systeminfo
+
+  # arm jobs
+  medium_arm:
+    machine:
+      image: arm-default
+    resource_class: arm.medium
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  large_arm:
+    machine:
+      image: arm-default
+    resource_class: arm.large
+    steps:
+      - run:
+          <<: *basic_docker_build
+      - run: |
+          echo $SLEEP
+          date
+          sleep $SLEEP
+          date
+          echo 'Done sleeping.'
+    environment:
+      SLEEP: 1
+
+  # vm jobs
   remote_docker:
     <<: *remote_docker_defaults
     steps:
@@ -209,7 +372,6 @@ workflows:
 
   vm_jobs:
     jobs:
-      - machine
       - remote_docker
       - docker_layer_caching
       - machine_dlc
@@ -227,3 +389,26 @@ workflows:
             - write_workspace
       - artifacts_test_results
 
+  linux_jobs:
+    jobs:
+      - medium_linux
+      - large_linux
+      - xlarge_linux
+      - 2xlarge_linux
+
+  windows_jobs:
+    jobs:
+      - medium_windows
+      - large_windows
+      - xlarge_windows
+      - 2xlarge_windows
+
+  arm_jobs:
+    jobs:
+      - run_arm_jobs_if_ec2
+      - medium_arm:
+          requires:
+            - run_arm_jobs_if_ec2
+      - large_arm:
+          requires:
+            - run_arm_jobs_if_ec2
