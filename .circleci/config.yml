@@ -138,7 +138,7 @@ jobs:
   medium_windows:
     machine:
       image: windows-default
-    resource_class: medium
+    resource_class: windows.medium
     steps:
       - run:
           <<: *basic_docker_build
@@ -154,7 +154,7 @@ jobs:
   large_windows:
     machine:
       image: windows-default
-    resource_class: large
+    resource_class: windows.large
     steps:
       - run:
           <<: *basic_docker_build
@@ -170,7 +170,7 @@ jobs:
   xlarge_windows:
     machine:
       image: windows-default
-    resource_class: xlarge
+    resource_class: windows.xlarge
     steps:
       - run:
           <<: *basic_docker_build
@@ -186,7 +186,7 @@ jobs:
   2xlarge_windows:
     machine:
       image: windows-default
-    resource_class: 2xlarge
+    resource_class: windows.2xlarge
     steps:
       - run:
           <<: *basic_docker_build
