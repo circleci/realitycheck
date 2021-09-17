@@ -140,64 +140,32 @@ jobs:
       image: windows-default
     resource_class: windows.medium
     steps:
-      - run:
-          <<: *basic_docker_build
-      - run: |
-          echo $SLEEP
-          date
-          sleep $SLEEP
-          date
-          echo 'Done sleeping.'
-    environment:
-      SLEEP: 1
+      - checkout
+      - run: systeminfo
 
   large_windows:
     machine:
       image: windows-default
     resource_class: windows.large
     steps:
-      - run:
-          <<: *basic_docker_build
-      - run: |
-          echo $SLEEP
-          date
-          sleep $SLEEP
-          date
-          echo 'Done sleeping.'
-    environment:
-      SLEEP: 1
+      - checkout
+      - run: systeminfo
 
   xlarge_windows:
     machine:
       image: windows-default
     resource_class: windows.xlarge
     steps:
-      - run:
-          <<: *basic_docker_build
-      - run: |
-          echo $SLEEP
-          date
-          sleep $SLEEP
-          date
-          echo 'Done sleeping.'
-    environment:
-      SLEEP: 1
+      - checkout
+      - run: systeminfo
 
   2xlarge_windows:
     machine:
       image: windows-default
     resource_class: windows.2xlarge
     steps:
-      - run:
-          <<: *basic_docker_build
-      - run: |
-          echo $SLEEP
-          date
-          sleep $SLEEP
-          date
-          echo 'Done sleeping.'
-    environment:
-      SLEEP: 1
+      - checkout
+      - run: systeminfo
 
   windows-medium:
     machine:
