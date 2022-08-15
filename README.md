@@ -45,7 +45,7 @@ CIRCLE_CLOUD_PROVIDER=gcp
 Once installed, to run reality check, make any commit to the default branch of your forked repository. If installed correctly, your CircleCI Server Installation will pick up the commit and build it in parallel workflows.
 
 ```bash
-git commit --allow-empty -m "Trigger Build, Empty commit && git push
+git commit --allow-empty -m "Trigger Build, Empty commit" && git push
 ```
 
 ---
