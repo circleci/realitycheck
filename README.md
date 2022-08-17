@@ -1,12 +1,56 @@
-# realitycheck
+# CircleCI Reality Check
+This repository is used to check for a proper installation of CircleCI Server. It implements a sample app that validates some basic CircleCI features in parallel workflows.
 
-## Summary
-A sample app that validates some basic CircleCI features in three parallel workflows.
+![](misc/reality_check.png)
 
-**NOTE**: Please read the entirety of this README before continuing. There are some important prerequisites.
+---
 
-To run realitycheck, fork the repository and start building it on your installation of CircleCI. See [Using realitycheck to validate your CircleCI installation](https://support.circleci.com/hc/en-us/articles/360011235534), in the CircleCI Support Center, for details on forking the project and building it on your CircleCI installation.
+## Installation
+To install and run reality check on your CircleCI Server installation, follow these steps.
 
+1. Fork this repository to the GitHub environment tied to your server installation. [See here for more information](https://support.circleci.com/hc/en-us/articles/360011235534).
+
+
+2. Set up your repository project in your CircleCI Server installation.
+
+
+3. Generate a **personal access token - not a project token**, and add it as an environment variable in your project with the name `CIRCLE_TOKEN`.
+
+
+4. Determine the base URL of your install, including protocol, and remove the trailing slash and "app" subdomain if present. Add it as an environment variable in your project with the name `CIRCLE_HOSTNAME`. 
+
+    > *Note*: As an example, if your dashboard is accessible at `https://app.server.example.com/dashboard/` your `CIRCLE_HOSTNAME` is `https://server.example.com`
+
+
+5. Set the environment variable in your project with the name `CIRCLE_CLOUD_PROVIDER` as either `gcp`, `aws`, or `other`. depending on your installation.
+
+
+### Example Project Environment Variables - AWS Server Installation
+```bash
+CIRCLE_TOKEN=123456789-personal-access-token
+CIRCLE_HOSTNAME=https://aws-server-install.example.com
+CIRCLE_CLOUD_PROVIDER=aws
+```
+
+### Example Project Environment Variables - GCP Server Installation
+```bash
+CIRCLE_TOKEN=123456789-personal-access-token
+CIRCLE_HOSTNAME=https://gcp-server-install.example.com
+CIRCLE_CLOUD_PROVIDER=gcp
+```
+
+---
+
+## Running Reality Check
+Once installed, to run reality check, make any commit to the default branch of your forked repository. If installed correctly, your CircleCI Server Installation will pick up the commit and build it in parallel workflows.
+
+```bash
+git commit --allow-empty -m "Trigger Build, Empty commit" && git push
+```
+
+---
+
+## Reality Check Workflows
 Descriptions of the three workflows follow.
 
 ## `resource_class` workflow
@@ -37,6 +81,22 @@ Context Name     | Key Name
 org-global       | CONTEXT_END_TO_END_TEST_VAR
 individual-local | MULTI_CONTEXT_END_TO_END_VAR
 
+
+
+## GCP Jobs Workflow
+Tests android machine images on Google Cloud Platform. First checks if the environment is configured for GCP with the CIRCLE_CLOUD_PROVIDER environment variable.
+
+### Prerequisites
+You will need to have your CIRCLE_TOKEN environment variable set to a personal access token, and will need your CIRCLE_CLOUD_PROVIDER set to `gcp` in lower-case. You must also have nomad clients configured, and your vm-service configured.
+
+
+## AWS Jobs Workflow
+Tests ARM based images on AWS. First checks if the environment is configured for AWS with the CIRCLE_CLOUD_PROVIDER environment variable.
+
+### Prerequisites
+You will need to have your CIRCLE_TOKEN environment variable set to a personal access token, and will need your CIRCLE_CLOUD_PROVIDER set to `aws` in lower-case. You must also have nomad clients configured, and your vm-service configured.
+
+---
 
 ## Contributing
 If you have more ideas for things that should tested, please submit a PR against the open-source repository on GitHub where this project is maintained: <https://github.com/circleci/realitycheck>.
