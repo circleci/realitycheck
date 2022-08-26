@@ -25,18 +25,40 @@ To install and run reality check on your CircleCI Server installation, follow th
 5. Set the environment variable in your project with the name `CIRCLE_CLOUD_PROVIDER` as either `gcp`, `aws`, or `other`. depending on your installation.
 
 
-### Example Project Environment Variables - AWS Server Installation
+6. Configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
+
+Context Name       | Environment Variable Key Name  | Value   
+-------------------|------------------------------- |-----------------------------
+`org-global`       | `CONTEXT_END_TO_END_TEST_VAR`  | `1`
+`individual-local` | `MULTI_CONTEXT_END_TO_END_VAR` | `1`
+
+
+### Example AWS Server Installation
 ```bash
+# Project Environment Variables
 CIRCLE_TOKEN=123456789-personal-access-token
 CIRCLE_HOSTNAME=https://aws-server-install.example.com
 CIRCLE_CLOUD_PROVIDER=aws
+
+# org-global context environment variables
+CONTEXT_END_TO_END_TEST_VAR=1
+
+# individual-local context environment variables
+MULTI_CONTEXT_END_TO_END_VAR=1
 ```
 
-### Example Project Environment Variables - GCP Server Installation
+### Example GCP Server Installation
 ```bash
+# Project Environment Variables
 CIRCLE_TOKEN=123456789-personal-access-token
 CIRCLE_HOSTNAME=https://gcp-server-install.example.com
 CIRCLE_CLOUD_PROVIDER=gcp
+
+# org-global context environment variables
+CONTEXT_END_TO_END_TEST_VAR=1
+
+# individual-local context environment variables
+MULTI_CONTEXT_END_TO_END_VAR=1
 ```
 
 ---
@@ -72,15 +94,6 @@ Tests the functionality  of the [`machine` executor](https://circleci.com/docs/2
 - Tests the default `org-global` [context](https://circleci.com/docs/2.0/contexts) (*NOTE:* needs a key called `CONTEXT_END_TO_END_TEST_VAR` to exist in a context called `org-global`) 
 - Tests multiple contexts (*NOTE:* needs a key called `MULTI_CONTEXT_END_TO_END_VAR` to exist in a context called `individual-local`)
 - Tests upload/storage of [artifacts](https://circleci.com/docs/2.0/artifacts) and [test results](https://circleci.com/docs/2.0/collect-test-data)
-
-### Prerequisites
-You will need to configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
-
-Context Name     | Key Name                       
------------------|-----------------------------
-org-global       | CONTEXT_END_TO_END_TEST_VAR
-individual-local | MULTI_CONTEXT_END_TO_END_VAR
-
 
 
 ## GCP Jobs Workflow
