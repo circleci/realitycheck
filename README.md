@@ -10,12 +10,9 @@ To install and run reality check on your CircleCI Server installation, follow th
 
 1. Fork this repository to the GitHub environment tied to your server installation. [See here for more information](https://support.circleci.com/hc/en-us/articles/360011235534).
 
-
 2. Set up your repository project in your CircleCI Server installation.
 
-
 3. Generate a **personal access token - not a project token**, and add it as an environment variable in your project with the name `CIRCLE_TOKEN`.
-
 
 4. Determine the base URL of your install, including protocol, and remove the trailing slash and "app" subdomain if present. Add it as an environment variable in your project with the name `CIRCLE_HOSTNAME`. 
 
@@ -24,19 +21,39 @@ To install and run reality check on your CircleCI Server installation, follow th
 
 5. Set the environment variable in your project with the name `CIRCLE_CLOUD_PROVIDER` as either `gcp`, `aws`, or `other`. depending on your installation.
 
+6. Configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
 
-### Example Project Environment Variables - AWS Server Installation
+Context Name       | Environment Variable Key Name  | Value   
+-------------------|------------------------------- |-----------------------------
+`org-global`       | `CONTEXT_END_TO_END_TEST_VAR`  | `1`
+`individual-local` | `MULTI_CONTEXT_END_TO_END_VAR` | `1`
+
+### Example AWS Server Installation
 ```bash
+# Project Environment Variables
 CIRCLE_TOKEN=123456789-personal-access-token
 CIRCLE_HOSTNAME=https://aws-server-install.example.com
 CIRCLE_CLOUD_PROVIDER=aws
+
+# org-global context environment variables
+CONTEXT_END_TO_END_TEST_VAR=1
+
+# individual-local context environment variables
+MULTI_CONTEXT_END_TO_END_VAR=1
 ```
 
-### Example Project Environment Variables - GCP Server Installation
+### Example GCP Server Installation
 ```bash
+# Project Environment Variables
 CIRCLE_TOKEN=123456789-personal-access-token
 CIRCLE_HOSTNAME=https://gcp-server-install.example.com
 CIRCLE_CLOUD_PROVIDER=gcp
+
+# org-global context environment variables
+CONTEXT_END_TO_END_TEST_VAR=1
+
+# individual-local context environment variables
+MULTI_CONTEXT_END_TO_END_VAR=1
 ```
 
 ---
@@ -62,7 +79,6 @@ Tests all known `resource_class` options—queries the CircleCI API to verify th
 - The base URL of your CircleCI installation (e.g. https://circleci.com) must be specified via a `CIRCLE_HOSTNAME` project environment variable
 - A personal API token (see `CIRCLE_HOSTNAME/account/api` URL endpoint) must be stored as a `CIRCLE_TOKEN` project environment variable
 
-
 ## VM service workflow
 Tests the functionality  of the [`machine` executor](https://circleci.com/docs/2.0/executor-types/#using-machine), [Remote Docker Environment](https://circleci.com/docs/2.0/building-docker-images), and [Docker Layer Caching](https://circleci.com/docs/2.0/docker-layer-caching).
 
@@ -73,22 +89,12 @@ Tests the functionality  of the [`machine` executor](https://circleci.com/docs/2
 - Tests multiple contexts (*NOTE:* needs a key called `MULTI_CONTEXT_END_TO_END_VAR` to exist in a context called `individual-local`)
 - Tests upload/storage of [artifacts](https://circleci.com/docs/2.0/artifacts) and [test results](https://circleci.com/docs/2.0/collect-test-data)
 
-### Prerequisites
-You will need to configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
-
-Context Name     | Key Name                       
------------------|-----------------------------
-org-global       | CONTEXT_END_TO_END_TEST_VAR
-individual-local | MULTI_CONTEXT_END_TO_END_VAR
-
-
 
 ## GCP Jobs Workflow
 Tests android machine images on Google Cloud Platform. First checks if the environment is configured for GCP with the CIRCLE_CLOUD_PROVIDER environment variable.
 
 ### Prerequisites
 You will need to have your CIRCLE_TOKEN environment variable set to a personal access token, and will need your CIRCLE_CLOUD_PROVIDER set to `gcp` in lower-case. You must also have nomad clients configured, and your vm-service configured.
-
 
 ## AWS Jobs Workflow
 Tests ARM based images on AWS. First checks if the environment is configured for AWS with the CIRCLE_CLOUD_PROVIDER environment variable.
