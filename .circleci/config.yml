@@ -1,7 +1,7 @@
 version: 2.1
 
 executors:
-  default:
+  docker: # Docker using the Base Convenience Image
     parameters:
       resource_class:
         type: string
@@ -58,13 +58,13 @@ jobs:
         type: string
         default: "small"
     executor:
-      name: default
+      name: docker
       resource_class: <<parameters.resource_class>>
     steps:
       - verify_resource_class
   
   check_if_environment_is_aws:
-    executor: default
+    executor: docker
     steps:
       - run:
           name: Verify AWS Environment
@@ -79,7 +79,7 @@ jobs:
             fi
 
   check_if_environment_is_gcp:
-    executor: default
+    executor: docker
     steps:
       - run:
           name: Verify GCP Environment
