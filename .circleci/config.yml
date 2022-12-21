@@ -2,8 +2,13 @@ version: 2.1
 
 executors:
   default:
+    parameters:
+      resource_class:
+        type: string
+        default: "small"
     docker:
       - image: 'cimg/base:2021.02-20.04'
+    resource_class: <<parameters.resource_class>>
 
 commands:
   verify_resource_class:
@@ -24,11 +29,6 @@ commands:
             "${CIRCLE_HOSTNAME%/}/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
             circle-token=$CIRCLE_TOKEN" | \
             jq '.picard.resource_class.class' | grep $CIRCLE_JOB
-
-resource_job_defaults: &resource_job_defaults
-  executor: default
-  steps:
-    - verify_resource_class
 
 remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
@@ -51,26 +51,17 @@ workspaces_defaults: &workspaces_defaults
   working_directory: ~/foo/bar
 
 jobs:
-  # resource class jobs
-  small: # 1 vCPU, 2GB RAM
-    <<: *resource_job_defaults
-    resource_class: small
-
-  medium: # 2 vCPUs, 4GB RAM
-    <<: *resource_job_defaults
-    resource_class: medium
-
-  mediumplus: # 3 vCPUs, 6GB RAM
-    <<: *resource_job_defaults
-    resource_class: medium+
-
-  large: # 4 vCPUs, 8GB RAM
-    <<: *resource_job_defaults
-    resource_class: large
-
-  xlarge: # 8 vCPUs, 16GB RAM
-    <<: *resource_job_defaults
-    resource_class: xlarge
+  # docker resource class jobs
+  docker_resource_class:
+    parameters:
+      resource_class:
+        type: string
+        default: "small"
+    executor:
+      name: default
+      resource_class: <<parameters.resource_class>>
+    steps:
+      - verify_resource_class
   
   check_if_environment_is_aws:
     executor: default
@@ -271,11 +262,10 @@ workflows:
   version: 2
   resource_class_jobs:
     jobs:
-      - small
-      - medium
-      - mediumplus
-      - large
-      - xlarge
+     - docker_resource_class:d
+        matrix:
+          parameters:
+            resource_class: [small, medium, medium+, large, xlarge]
 
   vm_jobs:
     jobs:
