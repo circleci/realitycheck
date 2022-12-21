@@ -1,8 +1,12 @@
-version: 2
+version: 2.1
+
+executors:
+  default:
+    docker:
+      - image: 'cimg/base:2021.02-20.04'
 
 resource_job_defaults: &resource_job_defaults
-  docker:
-    - image: 'cimg/base:2021.02-20.04'
+  executor: default
   steps:
     - run:
         name: verify required Environment Variables
@@ -64,8 +68,7 @@ jobs:
     resource_class: xlarge
   
   check_if_environment_is_aws:
-    docker:
-    - image: 'cimg/base:2021.02-20.04'
+    executor: default
     steps:
       - run:
           name: Verify AWS Environment
@@ -80,8 +83,7 @@ jobs:
             fi
 
   check_if_environment_is_gcp:
-    docker:
-    - image: 'cimg/base:2021.02-20.04'
+    executor: default
     steps:
       - run:
           name: Verify GCP Environment
