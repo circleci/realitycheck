@@ -9,6 +9,15 @@ executors:
     docker:
       - image: 'cimg/base:2021.02-20.04'
     resource_class: <<parameters.resource_class>>
+  windows:  # Windows using the default windows image
+    parameters:
+      resource_class:
+        type: string
+        default: "medium"
+    machine:
+      image: windows-default
+      shell: 'powershell.exe -ExecutionPolicy Bypass'
+    resource_class: <<parameters.resource_class>>
 
 commands:
   verify_resource_class:
