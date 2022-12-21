@@ -259,10 +259,9 @@ jobs:
           path: test-results
 
 workflows:
-  version: 2
   resource_class_jobs:
     jobs:
-     - docker_resource_class:d
+     - docker_resource_class:
         matrix:
           parameters:
             resource_class: [small, medium, medium+, large, xlarge]
