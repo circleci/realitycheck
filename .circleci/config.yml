@@ -12,6 +12,10 @@ executors:
 
 commands:
   verify_resource_class:
+    parameters:
+      resource_class:
+        type: string
+        default: "small"
     steps:
       - run:
           name: verify required Environment Variables
@@ -28,7 +32,7 @@ commands:
             curl -k \
             "${CIRCLE_HOSTNAME%/}/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
             circle-token=$CIRCLE_TOKEN" | \
-            jq '.picard.resource_class.class' | grep $CIRCLE_JOB
+            jq '.picard.resource_class.class' | grep <<parameters.resource_class>>
 
 remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
@@ -61,7 +65,8 @@ jobs:
       name: docker
       resource_class: <<parameters.resource_class>>
     steps:
-      - verify_resource_class
+      - verify_resource_class:
+          resource_class: <<parameters.resource_class>>
   
   check_if_environment_is_aws:
     executor: docker
