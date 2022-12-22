@@ -66,8 +66,9 @@ commands:
             - run:
                 name: Verify that job ran with the requested resource_class option
                 command: |
-                  # Commands are run in a Windows virtual machine environment
-                  Write-Host 'Hello, Windows'
+                  $job = Invoke-RestMethod -URI https://$env:CIRCLE_HOSTNAME/api/v2/project/gh/$env:CIRCLE_PROJECT_USERNAME/$env:CIRCLE_PROJECT_REPONAME/job/$env:CIRCLE_BUILD_NUM \
+                    -Headers @{ 'Circle-Token' = '$env:CIRCLE_TOKEN' }
+                  $job.executor.resource_class | Select-String -Pattern '<<parameters.resource_class>>'
 
 remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
