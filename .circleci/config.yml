@@ -317,7 +317,7 @@ workflows:
       - executor_resource_class_job:
           matrix:
             parameters:
-              resource_class: [windows.medium]
+              resource_class: [windows.medium, windows.large]
               executor_type: [windows]
 
   vm_jobs:
