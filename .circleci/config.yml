@@ -30,19 +30,19 @@ commands:
         type: string
         default: "docker"
     steps:
-      - run:
-          name: verify required Environment Variables
-          command: |
-            if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
-              echo "You must provide 2 Environment Variables in project settings for this job to run."
-              echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
-              echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
-              exit 1
-            fi
       - when:
           condition:
             equal: [ "docker", << parameters.executor_type >> ]
           steps:
+            - run:
+                name: verify required Environment Variables
+                command: |
+                  if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
+                    echo "You must provide 2 Environment Variables in project settings for this job to run."
+                    echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
+                    echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
+                    exit 1
+                  fi
             - run:
                 name: Verify that job ran with the requested resource_class option
                 command: |
@@ -54,6 +54,15 @@ commands:
           condition:
             equal: [ "windows", << parameters.executor_type >> ]
           steps:
+            - run:
+                name: verify required Environment Variables
+                command: |
+                  if (!((Test-Path env:CIRCLE_HOSTNAME) -and (Test-Path env:CIRCLE_TOKEN))) {
+                    Write-Host "You must provide 2 Environment Variables in project settings for this job to run."
+                    Write-Host "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. "https://ci.example.com""
+                    Write-Host "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
+                    Exit 1
+                  }
             - run:
                 name: Verify that job ran with the requested resource_class option
                 command: |
@@ -294,18 +303,22 @@ jobs:
           path: test-results
 
 workflows:
-  resource_class_jobs:
+  docker_resource_class_jobs:
     jobs:
       - executor_resource_class_job:
           matrix:
             parameters:
               resource_class: [small, medium, medium+, large, xlarge]
               executor_type: [docker] # default, but re-defining for clarity
+
+  windows_resource_class_jobs:
+    jobs:
       - executor_resource_class_job:
           matrix:
             parameters:
               resource_class: [windows.medium, windows.large, windows.xlarge, windows.2xlarge]
               executor_type: [windows]
+
   vm_jobs:
     jobs:
       - machine
