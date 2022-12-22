@@ -20,6 +20,7 @@ executors:
     resource_class: <<parameters.resource_class>>
 
 commands:
+  # resource_class verification commands to execute depending on executor_type
   verify_resource_class:
     parameters:
       resource_class:
@@ -80,19 +81,23 @@ workspaces_defaults: &workspaces_defaults
   working_directory: ~/foo/bar
 
 jobs:
-  # docker resource class jobs
-  docker_resource_class:
+  # job definition for verifying the resource_class per each executor_type
+  executor_resource_class_job:
     parameters:
       resource_class:
         type: string
         default: "small"
+      executor_type:
+        type: string
+        default: "docker"
     executor:
-      name: docker
+      name: <<parameters.executor_type>>
       resource_class: <<parameters.resource_class>>
     steps:
       - verify_resource_class:
           resource_class: <<parameters.resource_class>>
-  
+          executor_type: <<parameters.executor_type>>
+
   check_if_environment_is_aws:
     executor: docker
     steps:
@@ -291,11 +296,16 @@ jobs:
 workflows:
   resource_class_jobs:
     jobs:
-     - docker_resource_class:
-        matrix:
-          parameters:
-            resource_class: [small, medium, medium+, large, xlarge]
-
+      - executor_resource_class_job:
+          matrix:
+            parameters:
+              resource_class: [small, medium, medium+, large, xlarge]
+              executor_type: [docker] # default, but re-defining for clarity
+      - executor_resource_class_job:
+          matrix:
+            parameters:
+              resource_class: [medium, large, xlarge, 2xlarge]
+              executor_type: [windows]
   vm_jobs:
     jobs:
       - machine
