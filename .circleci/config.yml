@@ -92,7 +92,7 @@ workspaces_defaults: &workspaces_defaults
 
 jobs:
   # job definition for verifying the resource_class per each executor_type
-  executor_resource_class_job:
+  executor_resource_class:
     parameters:
       resource_class:
         type: string
@@ -317,7 +317,7 @@ jobs:
 workflows:
   docker_resource_class_jobs:
     jobs:
-      - executor_resource_class_job:
+      - executor_resource_class:
           matrix:
             parameters:
               resource_class: [small, medium, medium+, large, xlarge]
@@ -326,7 +326,7 @@ workflows:
   windows_resource_class_jobs:
     jobs:
       - check_if_windows_is_enabled
-      - executor_resource_class_job:
+      - executor_resource_class:
           matrix:
             parameters:
               resource_class: [windows.medium, windows.large, windows.xlarge]
