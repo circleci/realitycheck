@@ -21,7 +21,7 @@ To install and run reality check on your CircleCI Server installation, follow th
 
 5. Set the environment variable in your project with the name `CIRCLE_CLOUD_PROVIDER` as either `gcp`, `aws`, or `other`. depending on your installation.
 
-6. You can __optionally__ set `CIRCLE_WINDOWS_EXECUTOR` to `true` in order to run a set of verification jobs for the windows execution environment. This requires a supported CircleCI Windows image.
+6. You can __optionally__ set `CIRCLE_WINDOWS_EXECUTOR` to `true` in order to run a set of verification jobs for the windows execution environment. This requires a supported CircleCI Windows image, see instructions in [CircleCI-Public/circleci-server-windows-image-builder](https://github.com/CircleCI-Public/circleci-server-windows-image-builder).
 
 7. Configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
 
