@@ -21,7 +21,9 @@ To install and run reality check on your CircleCI Server installation, follow th
 
 5. Set the environment variable in your project with the name `CIRCLE_CLOUD_PROVIDER` as either `gcp`, `aws`, or `other`. depending on your installation.
 
-6. Configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
+6. You can __optionally__ set `CIRCLE_WINDOWS_EXECUTOR` to `true` in order to run a set of verification jobs for the windows execution environment. This requires a supported CircleCI Windows image, see instructions in [CircleCI-Public/circleci-server-windows-image-builder](https://github.com/CircleCI-Public/circleci-server-windows-image-builder).
+
+7. Configure the following contexts and keys (their values can be anything). Docs on how to set up contexts [can be found here](https://circleci.com/docs/2.0/contexts/).
 
 Context Name       | Environment Variable Key Name  | Value   
 -------------------|------------------------------- |-----------------------------
@@ -34,6 +36,7 @@ Context Name       | Environment Variable Key Name  | Value
 CIRCLE_TOKEN=123456789-personal-access-token
 CIRCLE_HOSTNAME=https://aws-server-install.example.com
 CIRCLE_CLOUD_PROVIDER=aws
+CIRCLE_WINDOWS_EXECUTOR=true # Optional, only if using a Windowws AMI
 
 # org-global context environment variables
 CONTEXT_END_TO_END_TEST_VAR=1
@@ -48,6 +51,7 @@ MULTI_CONTEXT_END_TO_END_VAR=1
 CIRCLE_TOKEN=123456789-personal-access-token
 CIRCLE_HOSTNAME=https://gcp-server-install.example.com
 CIRCLE_CLOUD_PROVIDER=gcp
+CIRCLE_WINDOWS_EXECUTOR=true # Optional, only if using a Windows AMI
 
 # org-global context environment variables
 CONTEXT_END_TO_END_TEST_VAR=1

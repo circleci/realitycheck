@@ -1,25 +1,74 @@
-version: 2
+version: 2.1
 
-resource_job_defaults: &resource_job_defaults
-  docker:
-    - image: 'cimg/base:2021.02-20.04'
-  steps:
-    - run:
-        name: verify required Environment Variables
-        command: |
-          if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
-            echo "You must provide 2 Environment Variables in project settings for this job to run."
-            echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
-            echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
-            exit 1
-          fi
-    - run:
-        name: verify that job ran with the requested resource_class option
-        command: |
-          curl -k \
-          "${CIRCLE_HOSTNAME%/}/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
-          circle-token=$CIRCLE_TOKEN" | \
-          jq '.picard.resource_class.class' | grep $CIRCLE_JOB
+executors:
+  docker: # Docker using the Base Convenience Image
+    parameters:
+      resource_class:
+        type: string
+        default: "small"
+    docker:
+      - image: 'cimg/base:2021.02-20.04'
+    resource_class: <<parameters.resource_class>>
+  windows:  # Windows using the default windows image
+    parameters:
+      resource_class:
+        type: string
+        default: "medium"
+    machine:
+      image: windows-default
+      shell: 'powershell.exe -ExecutionPolicy Bypass'
+    resource_class: <<parameters.resource_class>>
+
+commands:
+  # resource_class verification commands to execute depending on executor_type
+  verify_resource_class:
+    parameters:
+      resource_class:
+        type: string
+        default: "small"
+      executor_type:
+        type: string
+        default: "docker"
+    steps:
+      - when:
+          condition:
+            equal: [ "docker", << parameters.executor_type >> ]
+          steps:
+            - run:
+                name: verify required Environment Variables
+                command: |
+                  if [ -z "${CIRCLE_HOSTNAME}" -o -z "${CIRCLE_TOKEN}" ];then
+                    echo "You must provide 2 Environment Variables in project settings for this job to run."
+                    echo "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. \"https://ci.example.com\""
+                    echo "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
+                    exit 1
+                  fi
+            - run:
+                name: Verify that job ran with the requested resource_class option
+                command: |
+                  curl -k \
+                  "${CIRCLE_HOSTNAME%/}/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM?\
+                  circle-token=$CIRCLE_TOKEN" | \
+                  jq '.picard.resource_class.class' | grep <<parameters.resource_class>>
+      - when:
+          condition:
+            equal: [ "windows", << parameters.executor_type >> ]
+          steps:
+            - run:
+                name: verify required Environment Variables
+                command: |
+                  if (!((Test-Path env:CIRCLE_HOSTNAME) -and (Test-Path env:CIRCLE_TOKEN))) {
+                    Write-Host "You must provide 2 Environment Variables in project settings for this job to run."
+                    Write-Host "CIRCLE_HOSTNAME: Should be the scheme://domain of your install. "https://ci.example.com""
+                    Write-Host "CIRCLE_TOKEN: Should be the API Key of an admin or project level with Scope:All"
+                    Exit 1
+                  }
+            - run:
+                name: Verify that job ran with the requested resource_class option
+                command: |
+                  $job = Invoke-RestMethod -URI "$env:CIRCLE_HOSTNAME/api/v2/project/gh/$env:CIRCLE_PROJECT_USERNAME/$env:CIRCLE_PROJECT_REPONAME/job/$env:CIRCLE_BUILD_NUM" `
+                    -Headers @{ "Circle-Token" = "$env:CIRCLE_TOKEN" }
+                  $job.executor.resource_class | Select-String -Pattern "<<parameters.resource_class>>"
 
 remote_docker_defaults: &remote_docker_defaults
   docker: [{image: 'docker:17.06-git'}]
@@ -42,30 +91,25 @@ workspaces_defaults: &workspaces_defaults
   working_directory: ~/foo/bar
 
 jobs:
-  # resource class jobs
-  small: # 1 vCPU, 2GB RAM
-    <<: *resource_job_defaults
-    resource_class: small
+  # job definition for verifying the resource_class per each executor_type
+  executor_resource_class:
+    parameters:
+      resource_class:
+        type: string
+        default: "small"
+      executor_type:
+        type: string
+        default: "docker"
+    executor:
+      name: <<parameters.executor_type>>
+      resource_class: <<parameters.resource_class>>
+    steps:
+      - verify_resource_class:
+          resource_class: <<parameters.resource_class>>
+          executor_type: <<parameters.executor_type>>
 
-  medium: # 2 vCPUs, 4GB RAM
-    <<: *resource_job_defaults
-    resource_class: medium
-
-  medium+: # 3 vCPUs, 6GB RAM
-    <<: *resource_job_defaults
-    resource_class: medium+
-
-  large: # 4 vCPUs, 8GB RAM
-    <<: *resource_job_defaults
-    resource_class: large
-
-  xlarge: # 8 vCPUs, 16GB RAM
-    <<: *resource_job_defaults
-    resource_class: xlarge
-  
   check_if_environment_is_aws:
-    docker:
-    - image: 'cimg/base:2021.02-20.04'
+    executor: docker
     steps:
       - run:
           name: Verify AWS Environment
@@ -80,8 +124,7 @@ jobs:
             fi
 
   check_if_environment_is_gcp:
-    docker:
-    - image: 'cimg/base:2021.02-20.04'
+    executor: docker
     steps:
       - run:
           name: Verify GCP Environment
@@ -92,6 +135,17 @@ jobs:
             fi
             if [[ "${CIRCLE_CLOUD_PROVIDER}" != 'gcp' ]]; then
               echo "This installation is not in an GCP environment. Cancelling downstream workflow.";
+              curl -X POST "${CIRCLE_HOSTNAME%/}/api/v2/workflow/$CIRCLE_WORKFLOW_ID/cancel?circle-token=$CIRCLE_TOKEN"
+            fi
+
+  check_if_windows_is_enabled:
+    executor: docker
+    steps:
+      - run:
+          name: Verify if Windows enabled env flag is set to true
+          command: |
+            if [[ "${CIRCLE_WINDOWS_EXECUTOR}" != "true" ]]; then
+              echo "Windows executor environment flag is not set to \"true\". Cancelling downstream workflow."
               curl -X POST "${CIRCLE_HOSTNAME%/}/api/v2/workflow/$CIRCLE_WORKFLOW_ID/cancel?circle-token=$CIRCLE_TOKEN"
             fi
 
@@ -261,14 +315,24 @@ jobs:
           path: test-results
 
 workflows:
-  version: 2
-  resource_class_jobs:
+  docker_resource_class_jobs:
     jobs:
-      - small
-      - medium
-      - medium+
-      - large
-      - xlarge
+      - executor_resource_class:
+          matrix:
+            parameters:
+              resource_class: [small, medium, medium+, large, xlarge]
+              executor_type: [docker] # default, but re-defining for clarity
+
+  windows_resource_class_jobs:
+    jobs:
+      - check_if_windows_is_enabled
+      - executor_resource_class:
+          matrix:
+            parameters:
+              resource_class: [windows.medium, windows.large, windows.xlarge]
+              executor_type: [windows]
+          requires:
+            - check_if_windows_is_enabled
 
   vm_jobs:
     jobs:
