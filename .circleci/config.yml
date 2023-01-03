@@ -142,10 +142,10 @@ jobs:
     executor: docker
     steps:
       - run:
-          name: Verify if Windows enabled env flag is set
+          name: Verify if Windows enabled env flag is set to true
           command: |
-            if [ -z "${CIRCLE_WINDOWS_EXECUTOR}" ];then
-              echo "Windows executor environment flag is not set. Cancelling downstream workflow."
+            if [[ "${CIRCLE_WINDOWS_EXECUTOR}" != "true" ]]; then
+              echo "Windows executor environment flag is not set to \"true\". Cancelling downstream workflow."
               curl -X POST "${CIRCLE_HOSTNAME%/}/api/v2/workflow/$CIRCLE_WORKFLOW_ID/cancel?circle-token=$CIRCLE_TOKEN"
             fi
 
