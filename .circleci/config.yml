@@ -91,6 +91,22 @@ workspaces_defaults: &workspaces_defaults
   working_directory: ~/foo/bar
 
 jobs:
+  env-subst-example:
+    executor: docker
+    environment:
+      foo: bar
+      alpha: beta
+    steps:
+      - checkout
+      - run:
+          command: echo 'the value of foo is "$foo" and next to alpha is "$alpha"' > template.tmpl
+      - run:
+          command: cat template.tmpl
+      - run:
+          command: circleci env subst < template.tmpl > output.txt
+      - run:
+          command: grep "bar" output.txt | grep "beta"
+
   # job definition for verifying the resource_class per each executor_type
   executor_resource_class:
     parameters:
@@ -367,3 +383,7 @@ workflows:
           requires:
             - write_workspace
       - artifacts_test_results
+
+  other_jobs:
+    jobs:   
+      - env-subst-example
