@@ -105,7 +105,7 @@ jobs:
       - run:
           command: circleci env subst < template.tmpl > output.txt
       - run:
-          command: cat output.txt
+          command: grep "bar" output.txt | grep "beta"
 
   # job definition for verifying the resource_class per each executor_type
   executor_resource_class:
