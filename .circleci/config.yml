@@ -336,7 +336,7 @@ workflows:
       - executor_resource_class:
           matrix:
             parameters:
-              resource_class: [small, medium, medium+, large, xlarge]
+              resource_class: [small, medium, medium+, large, xlarge. 2xlarge+]
               executor_type: [docker] # default, but re-defining for clarity
 
   windows_resource_class_jobs:
