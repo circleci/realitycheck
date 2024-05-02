@@ -1,4 +1,5 @@
 # CircleCI Reality Check
+
 This repository is used to check for a proper installation of CircleCI Server. It implements a sample app that validates some basic CircleCI features in parallel workflows.
 
 ![](misc/reality_check.png)
