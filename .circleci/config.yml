@@ -71,7 +71,7 @@ commands:
                   $job.executor.resource_class | Select-String -Pattern "<<parameters.resource_class>>"
 
 remote_docker_defaults: &remote_docker_defaults
-  docker: [{image: 'docker:17.06-git'}]
+  docker: [{image: 'docker:17.12-git'}]
 
 basic_docker_build: &basic_docker_build
   name: "Build a really basic docker image"
