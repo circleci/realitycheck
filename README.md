@@ -12,7 +12,7 @@ To install and run reality check on your CircleCI Server installation, follow th
 
 2. Set up your repository project in your CircleCI Server installation.
 
-3. Generate a **personal access token - not a project token**, and add it as an environment variable in your project with the name `CIRCLE_TOKEN`.
+3. Generate a **personal api token - not a project token**, and add it as an environment variable in your project with the name `CIRCLE_TOKEN`.
 
 4. Determine the base URL of your install, including protocol, and remove the trailing slash and "app" subdomain if present. Add it as an environment variable in your project with the name `CIRCLE_HOSTNAME`. 
 
