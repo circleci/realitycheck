@@ -7,7 +7,7 @@ executors:
         type: string
         default: "small"
     docker:
-      - image: 'cimg/base:2024.08-20.04'
+      - image: 'cimg/base:2024.12-20.04'
     resource_class: <<parameters.resource_class>>
   windows:  # Windows using the default windows image
     parameters:
