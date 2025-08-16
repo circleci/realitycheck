@@ -308,7 +308,7 @@ jobs:
 
   artifacts_test_results:
     docker:
-      - image: python:3.13.6
+      - image: python:3.13.7
     working_directory: ~/realitycheck
     steps:
       - checkout
