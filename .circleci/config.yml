@@ -167,7 +167,8 @@ jobs:
 
   # vm jobs
   machine:
-    machine: true
+    machine:
+      image: ubuntu-2204:current
     steps:
       - run:
           <<: *basic_docker_build
