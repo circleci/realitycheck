@@ -168,7 +168,7 @@ jobs:
   # vm jobs
   machine:
     machine:
-      image: ubuntu-2204:current
+      image: default
     steps:
       - run:
           <<: *basic_docker_build
@@ -235,6 +235,7 @@ jobs:
 
   machine_dlc:
     machine:
+      image: default
       docker_layer_caching: true
     steps:
       - run: which docker
